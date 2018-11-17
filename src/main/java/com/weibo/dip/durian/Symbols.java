@@ -1,10 +1,6 @@
 package com.weibo.dip.durian;
 
-/**
- * Common symbols.
- *
- * @author yurun
- */
+/** Common symbols. */
 public class Symbols {
   public static final String AMPERSAND = "&";
 
@@ -29,4 +25,8 @@ public class Symbols {
   public static final String NEWLINE = "\n";
 
   public static final String ASTERISK = "*";
+
+  public static final String EMPTY = "";
+
+  public static final String DASH = "-";
 }
