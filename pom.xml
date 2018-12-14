@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.weibo.dip</groupId>
   <artifactId>durian</artifactId>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
 
   <distributionManagement>
     <repository>
@@ -26,6 +26,7 @@
     <guava.version>18.0</guava.version>
     <log4j.version>1.2.17</log4j.version>
     <slf4j-log4j12.version>1.7.5</slf4j-log4j12.version>
+    <antlr.version>4.7.1</antlr.version>
     <java.version>1.8</java.version>
     <compiler.version>3.1</compiler.version>
     <source.version>2.1.2</source.version>
@@ -80,6 +81,14 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>${slf4j-log4j12.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- antlr -->
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4</artifactId>
+      <version>${antlr.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -140,6 +149,11 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <excludes>
+            com/weibo/dip/durian/antlr/calculator/*,com/weibo/dip/durian/antlr/expression/*,com/weibo/dip/durian/antlr/sparksql/*
+          </excludes>
+        </configuration>
       </plugin>
 
       <plugin>
