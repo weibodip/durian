@@ -1,11 +1,12 @@
 package com.weibo.dip.durian.hive;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 /** Query result. */
-public class QueryResult {
+public class QueryResult implements Serializable {
 
   public enum Type {
     ALL,

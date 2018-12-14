@@ -43,6 +43,7 @@ public class Analysis {
   private boolean isDescribeFunction;
   private boolean isDescribeDatabase;
   private boolean isDescribeTable;
+  private boolean isRefreshTable;
   private boolean isRefreshResource;
   private boolean isCacheTable;
   private boolean isUncacheTable;
@@ -373,6 +374,14 @@ public class Analysis {
 
   public void setDescribeTable(boolean describeTable) {
     isDescribeTable = describeTable;
+  }
+
+  public boolean isRefreshTable() {
+    return isRefreshTable;
+  }
+
+  public void setRefreshTable(boolean refreshTable) {
+    isRefreshTable = refreshTable;
   }
 
   public boolean isRefreshResource() {
