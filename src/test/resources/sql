@@ -1,0 +1,12 @@
+SELECT
+  sum(a)/(sum(b) - max(c)), MIN(foo) as min_foo, MAX(foo) as max_foo, SUM(foo) as sum_foo, AVG(foo) as avg_foo
+FROM
+  myTable
+WHERE
+  foo = 'foo'
+  AND bar BETWEEN 1 AND 20
+  OR (baz < 42 AND quux IN ('hello', 'goodbye')
+  AND quuux NOT IN (42, 69))
+GROUP BY
+  bar, baz
+TOP 50

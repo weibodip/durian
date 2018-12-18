@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.weibo.dip</groupId>
@@ -20,6 +20,7 @@
 
   <properties>
     <gson.version>2.6.2</gson.version>
+    <commons-io.version>2.6</commons-io.version>
     <commons-collections.version>3.2.1</commons-collections.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-lang3.version>3.7</commons-lang3.version>
@@ -36,6 +37,12 @@
 
   <dependencies>
     <!-- commons -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
@@ -151,7 +158,7 @@
         </executions>
         <configuration>
           <excludes>
-            com/weibo/dip/durian/antlr/calculator/*,com/weibo/dip/durian/antlr/expression/*,com/weibo/dip/durian/antlr/sparksql/*
+            com/weibo/dip/durian/antlr/calculator/*,com/weibo/dip/durian/antlr/expression/*,com/weibo/dip/durian/antlr/sparksql/*,com/weibo/dip/durian/antlr/pql2/*
           </excludes>
         </configuration>
       </plugin>
