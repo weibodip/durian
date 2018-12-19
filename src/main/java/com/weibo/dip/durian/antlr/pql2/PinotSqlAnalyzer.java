@@ -5,7 +5,9 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+/** @author yurun */
 public class PinotSqlAnalyzer {
   public void analyze(String sql) throws RuntimeException {
     CharStream input = CharStreams.fromString(sql);
@@ -19,10 +21,12 @@ public class PinotSqlAnalyzer {
     parser.removeErrorListeners();
     parser.addErrorListener(new SyntaxErrorListener());
 
-    ParseTree tree = parser.statement();
+    ParseTree tree = parser.root();
 
-    PinotSqlVisitor visitor = new PinotSqlVisitor();
+    ParseTreeWalker walker = new ParseTreeWalker();
 
-    visitor.visit(tree);
+    PinotSqlListener listener = new PinotSqlListener();
+
+    walker.walk(listener, tree);
   }
 }

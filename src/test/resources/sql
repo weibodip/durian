@@ -1,12 +1,17 @@
 SELECT
-  sum(a)/(sum(b) - max(c)), MIN(foo) as min_foo, MAX(foo) as max_foo, SUM(foo) as sum_foo, AVG(foo) as avg_foo
+  sum(a)/(sum(b) - max(c)) as custom, MIN(foo) as min_foo, max(foo) as max_foo
 FROM
   myTable
 WHERE
   foo = 'foo'
   AND bar BETWEEN 1 AND 20
-  OR (baz < 42 AND quux IN ('hello', 'goodbye')
+  OR (baz < 42 AND quux.abctest IN ('hello', 'goodbye')
   AND quuux NOT IN (42, 69))
+  OR c is not null
 GROUP BY
   bar, baz
+HAVING min(foo) > 10 and max(df) < 100
+order by min(a) desc, max(a) asc
 TOP 50
+limit 5, 10
+option (a = b)

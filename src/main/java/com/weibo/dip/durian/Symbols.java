@@ -29,4 +29,8 @@ public class Symbols {
   public static final String EMPTY = "";
 
   public static final String DASH = "-";
+
+  public static final String LEFT_PARENTHESIS = "(";
+
+  public static final String RIGHT_PARENTHESIS = ")";
 }

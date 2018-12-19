@@ -17,7 +17,7 @@ import org.antlr.v4.runtime.atn.ATNDeserializer;
 import org.antlr.v4.runtime.atn.ParserATNSimulator;
 import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.tree.ParseTreeVisitor;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
@@ -264,10 +264,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitRoot(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterRoot(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitRoot(this);
     }
   }
 
@@ -318,10 +321,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitStatement(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterStatement(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitStatement(this);
     }
   }
 
@@ -395,10 +401,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitSelect(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterSelect(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitSelect(this);
     }
   }
 
@@ -489,10 +498,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitOrderBy(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterOrderBy(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitOrderBy(this);
     }
   }
 
@@ -506,10 +518,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitOptions(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterOptions(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitOptions(this);
     }
   }
 
@@ -523,10 +538,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitGroupBy(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterGroupBy(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitGroupBy(this);
     }
   }
 
@@ -540,10 +558,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitTop(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterTop(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitTop(this);
     }
   }
 
@@ -557,10 +578,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitLimit(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterLimit(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitLimit(this);
     }
   }
 
@@ -574,10 +598,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitWhere(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterWhere(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitWhere(this);
     }
   }
 
@@ -591,10 +618,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitHaving(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterHaving(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitHaving(this);
     }
   }
 
@@ -697,10 +727,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitStarColumnList(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterStarColumnList(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitStarColumnList(this);
     }
   }
 
@@ -718,10 +751,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitOutputColumnList(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterOutputColumnList(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitOutputColumnList(this);
     }
   }
 
@@ -821,10 +857,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitOutputColumn(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterOutputColumn(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitOutputColumn(this);
     }
   }
 
@@ -894,10 +933,15 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitExpressionParenthesisGroup(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener)
+        ((PQL2Listener) listener).enterExpressionParenthesisGroup(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener)
+        ((PQL2Listener) listener).exitExpressionParenthesisGroup(this);
     }
   }
 
@@ -915,10 +959,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitIdentifier(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterIdentifier(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitIdentifier(this);
     }
   }
 
@@ -932,10 +979,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitConstant(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterConstant(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitConstant(this);
     }
   }
 
@@ -957,10 +1007,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitBinaryMathOp(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterBinaryMathOp(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitBinaryMathOp(this);
     }
   }
 
@@ -978,10 +1031,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitFunctionCall(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterFunctionCall(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitFunctionCall(this);
     }
   }
 
@@ -1142,10 +1198,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitStarExpression(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterStarExpression(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitStarExpression(this);
     }
   }
 
@@ -1163,10 +1222,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitExpressionList(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterExpressionList(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitExpressionList(this);
     }
   }
 
@@ -1238,10 +1300,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitBinaryMathOperator(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterBinaryMathOperator(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitBinaryMathOperator(this);
     }
   }
 
@@ -1288,10 +1353,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitFunction(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterFunction(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitFunction(this);
     }
   }
 
@@ -1337,10 +1405,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitTableName(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterTableName(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitTableName(this);
     }
   }
 
@@ -1414,10 +1485,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitStringLiteral(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterStringLiteral(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitStringLiteral(this);
     }
   }
 
@@ -1431,10 +1505,15 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitFloatingPointLiteral(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener)
+        ((PQL2Listener) listener).enterFloatingPointLiteral(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener)
+        ((PQL2Listener) listener).exitFloatingPointLiteral(this);
     }
   }
 
@@ -1448,10 +1527,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitIntegerLiteral(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterIntegerLiteral(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitIntegerLiteral(this);
     }
   }
 
@@ -1518,10 +1600,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitWhereClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterWhereClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitWhereClause(this);
     }
   }
 
@@ -1573,10 +1658,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitPredicateList(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterPredicateList(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitPredicateList(this);
     }
   }
 
@@ -1643,10 +1731,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitIsPredicate(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterIsPredicate(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitIsPredicate(this);
     }
   }
 
@@ -1660,10 +1751,15 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitPredicateParenthesisGroup(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener)
+        ((PQL2Listener) listener).enterPredicateParenthesisGroup(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener)
+        ((PQL2Listener) listener).exitPredicateParenthesisGroup(this);
     }
   }
 
@@ -1677,10 +1773,14 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitRegexpLikePredicate(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener)
+        ((PQL2Listener) listener).enterRegexpLikePredicate(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitRegexpLikePredicate(this);
     }
   }
 
@@ -1694,10 +1794,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitBetweenPredicate(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterBetweenPredicate(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitBetweenPredicate(this);
     }
   }
 
@@ -1711,10 +1814,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitInPredicate(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterInPredicate(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitInPredicate(this);
     }
   }
 
@@ -1728,10 +1834,14 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitComparisonPredicate(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener)
+        ((PQL2Listener) listener).enterComparisonPredicate(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitComparisonPredicate(this);
     }
   }
 
@@ -1836,10 +1946,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitInClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterInClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitInClause(this);
     }
   }
 
@@ -1924,10 +2037,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitIsClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterIsClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitIsClause(this);
     }
   }
 
@@ -1988,10 +2104,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitComparisonClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterComparisonClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitComparisonClause(this);
     }
   }
 
@@ -2029,10 +2148,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitComparisonOperator(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterComparisonOperator(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitComparisonOperator(this);
     }
   }
 
@@ -2099,10 +2221,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitBetweenClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterBetweenClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitBetweenClause(this);
     }
   }
 
@@ -2156,10 +2281,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitRegexpLikeClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterRegexpLikeClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitRegexpLikeClause(this);
     }
   }
 
@@ -2211,10 +2339,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitBooleanOperator(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterBooleanOperator(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitBooleanOperator(this);
     }
   }
 
@@ -2268,10 +2399,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitGroupByClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterGroupByClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitGroupByClause(this);
     }
   }
 
@@ -2317,10 +2451,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitGroupByList(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterGroupByList(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitGroupByList(this);
     }
   }
 
@@ -2379,10 +2516,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitHavingClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterHavingClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitHavingClause(this);
     }
   }
 
@@ -2430,10 +2570,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitOrderByClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterOrderByClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitOrderByClause(this);
     }
   }
 
@@ -2479,10 +2622,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitOrderByList(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterOrderByList(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitOrderByList(this);
     }
   }
 
@@ -2541,10 +2687,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitOrderByExpression(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterOrderByExpression(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitOrderByExpression(this);
     }
   }
 
@@ -2596,10 +2745,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitOrdering(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterOrdering(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitOrdering(this);
     }
   }
 
@@ -2649,10 +2801,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitTopClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterTopClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitTopClause(this);
     }
   }
 
@@ -2700,10 +2855,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitLimitClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterLimitClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitLimitClause(this);
     }
   }
 
@@ -2763,10 +2921,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitOptionListClause(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterOptionListClause(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitOptionListClause(this);
     }
   }
 
@@ -2831,10 +2992,13 @@ public class PQL2Parser extends Parser {
     }
 
     @Override
-    public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-      if (visitor instanceof PQL2Visitor)
-        return ((PQL2Visitor<? extends T>) visitor).visitOption(this);
-      else return visitor.visitChildren(this);
+    public void enterRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).enterOption(this);
+    }
+
+    @Override
+    public void exitRule(ParseTreeListener listener) {
+      if (listener instanceof PQL2Listener) ((PQL2Listener) listener).exitOption(this);
     }
   }
 
