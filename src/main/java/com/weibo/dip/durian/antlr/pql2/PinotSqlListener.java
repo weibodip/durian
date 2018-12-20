@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
+import java.util.regex.Pattern;
 import org.antlr.v4.runtime.RuleContext;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -14,6 +16,46 @@ import org.slf4j.LoggerFactory;
 
 public class PinotSqlListener extends PQL2BaseListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(PinotSqlListener.class);
+
+  private enum ClauseContext {
+    /*
+     optionalClause
+    */
+    OUTPUT_COLUMNS,
+    WHERE,
+    GROUP_BY,
+    HAVING,
+    ORDERBY,
+    TOP,
+    LIMIT,
+
+    /*
+     default
+    */
+    NULL
+  }
+
+  private Stack<ClauseContext> contexts = new Stack<>();
+
+  private void inContext(ClauseContext context) {
+    contexts.push(context);
+  }
+
+  private void upContext(ClauseContext context) {
+    if (contexts.peek().equals(context)) {
+      contexts.pop();
+    } else {
+      throw new RuntimeException(
+          "clause context inconsistent, pop "
+              + contexts.peek().name()
+              + ", but up "
+              + context.name());
+    }
+  }
+
+  private boolean isContext(ClauseContext context) {
+    return !(contexts.search(context) == -1);
+  }
 
   private static final Set<String> FUNCTIONS = new HashSet<>();
 
@@ -24,10 +66,19 @@ public class PinotSqlListener extends PQL2BaseListener {
     FUNCTIONS.add("AVG");
   }
 
+  private static final String BOOLEAN_OPERATOR_AND = "AND";
+
+  private static final String IDENTIFIER_FDATE = "fdate";
+
+  private static final Pattern FDATE_PATTERN =
+      Pattern.compile("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$");
+
   private Map<RuleContext, String> texts = new HashMap<>();
 
   private void setText(RuleContext context, String text) {
-    texts.put(context, text);
+    if (!texts.containsKey(context)) {
+      texts.put(context, text);
+    }
   }
 
   private String getText(RuleContext context) {
@@ -139,11 +190,6 @@ public class PinotSqlListener extends PQL2BaseListener {
 
     String expression = buffer.toString();
 
-    if (!(ctx.expression() instanceof PQL2Parser.BinaryMathOpContext)) {
-      throw new RuntimeException(
-          expression + ": parenthesis isn't supported in a single expression");
-    }
-
     setText(ctx, expression);
   }
 
@@ -249,6 +295,11 @@ public class PinotSqlListener extends PQL2BaseListener {
   /*
    optionalClause
   */
+
+  @Override
+  public void enterWhere(PQL2Parser.WhereContext ctx) {
+  }
+
   @Override
   public void exitWhere(PQL2Parser.WhereContext ctx) {
     setText(ctx, getText(ctx.whereClause()));
@@ -289,6 +340,59 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void exitWhereClause(PQL2Parser.WhereClauseContext ctx) {
+    PQL2Parser.PredicateContext firstPredicate = ctx.predicateList().predicate(0);
+
+    String firstPredicateText = getText(firstPredicate);
+
+    if (!(firstPredicate instanceof PQL2Parser.BetweenPredicateContext)) {
+      throw new RuntimeException(
+          firstPredicateText + ": Where clause first predicate must be between ... and ...");
+    }
+
+    PQL2Parser.BetweenClauseContext betweenClauseContext =
+        ((PQL2Parser.BetweenPredicateContext) firstPredicate).betweenClause();
+
+    PQL2Parser.ExpressionContext firstExpression = betweenClauseContext.expression(0);
+    PQL2Parser.ExpressionContext secondExpression = betweenClauseContext.expression(1);
+    PQL2Parser.ExpressionContext thirdExpression = betweenClauseContext.expression(2);
+
+    if (!(firstExpression instanceof PQL2Parser.IdentifierContext
+        && secondExpression instanceof PQL2Parser.ConstantContext
+        && thirdExpression instanceof PQL2Parser.ConstantContext
+        && ((PQL2Parser.ConstantContext) secondExpression).literal()
+            instanceof PQL2Parser.StringLiteralContext
+        && ((PQL2Parser.ConstantContext) thirdExpression).literal()
+            instanceof PQL2Parser.StringLiteralContext)) {
+      throw new RuntimeException(
+          firstPredicateText
+              + ": Where clause first predicate must be fdate between '...' and '...'");
+    }
+
+    if (!(firstExpression.getText().equals(IDENTIFIER_FDATE)
+        && FDATE_PATTERN
+            .matcher(
+                secondExpression.getText().substring(1, secondExpression.getText().length() - 1))
+            .matches()
+        && FDATE_PATTERN
+            .matcher(thirdExpression.getText().substring(1, thirdExpression.getText().length() - 1))
+            .matches())) {
+      throw new RuntimeException(
+          firstPredicateText
+              + ": Where clause first predicate must be fdate between 'yyyy-MM-dd HH:mm:ss' and 'yyyy-MM-dd HH:mm:ss'");
+    }
+
+    if (ctx.predicateList().predicate().size() > 1) {
+      PQL2Parser.BooleanOperatorContext firstBooleanOperator =
+          ctx.predicateList().booleanOperator(0);
+
+      String firstBooleanOperatorText = getText(firstBooleanOperator);
+
+      if (!firstBooleanOperator.getText().equals(BOOLEAN_OPERATOR_AND)) {
+        throw new RuntimeException(
+            firstBooleanOperatorText + ": Where clause first boolean operator must be and");
+      }
+    }
+
     StringBuilder buffer = new StringBuilder();
 
     buffer.append(ctx.WHERE().getText());
@@ -318,6 +422,10 @@ public class PinotSqlListener extends PQL2BaseListener {
   /*
    predicate
   */
+  @Override
+  public void enterPredicateParenthesisGroup(PQL2Parser.PredicateParenthesisGroupContext ctx) {
+  }
+
   @Override
   public void exitPredicateParenthesisGroup(PQL2Parser.PredicateParenthesisGroupContext ctx) {
     StringBuilder buffer = new StringBuilder();
