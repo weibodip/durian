@@ -57,13 +57,18 @@ public class PinotSqlListener extends PQL2BaseListener {
     return !(contexts.search(context) == -1);
   }
 
-  private static final Set<String> FUNCTIONS = new HashSet<>();
+  private static final Set<String> AGGREGATE_FUNCTIONS = new HashSet<>();
+  private static final Set<String> GRANULARITY_FUNCTIONS = new HashSet<>();
 
   static {
-    FUNCTIONS.add("SUM");
-    FUNCTIONS.add("MAX");
-    FUNCTIONS.add("MIN");
-    FUNCTIONS.add("AVG");
+    AGGREGATE_FUNCTIONS.add("SUM");
+    AGGREGATE_FUNCTIONS.add("MAX");
+    AGGREGATE_FUNCTIONS.add("MIN");
+    AGGREGATE_FUNCTIONS.add("AVG");
+
+    GRANULARITY_FUNCTIONS.add("MINUTES");
+    GRANULARITY_FUNCTIONS.add("HOURS");
+    GRANULARITY_FUNCTIONS.add("DAYS");
   }
 
   private static final String BOOLEAN_OPERATOR_AND = "AND";
@@ -119,9 +124,15 @@ public class PinotSqlListener extends PQL2BaseListener {
   /*
    outputColumns
   */
+
   @Override
-  public void exitStarColumnList(PQL2Parser.StarColumnListContext ctx) {
-    setText(ctx, Symbols.ASTERISK);
+  public void enterStarColumnList(PQL2Parser.StarColumnListContext ctx) {
+    throw new RuntimeException("select *: not supported");
+  }
+
+  @Override
+  public void enterOutputColumnList(PQL2Parser.OutputColumnListContext ctx) {
+    inContext(ClauseContext.OUTPUT_COLUMNS);
   }
 
   @Override
@@ -133,6 +144,8 @@ public class PinotSqlListener extends PQL2BaseListener {
     }
 
     setText(ctx, StringUtils.join(buffer, Symbols.COMMA + Symbols.SPACE));
+
+    upContext(ClauseContext.OUTPUT_COLUMNS);
   }
 
   /*
@@ -206,9 +219,18 @@ public class PinotSqlListener extends PQL2BaseListener {
 
     String funcCall = buffer.toString();
 
-    if (!(ctx.expressions().getChildCount() == 1
-        && ctx.expressions().getChild(0) instanceof PQL2Parser.IdentifierContext)) {
-      throw new RuntimeException(funcCall + ": parameters must be a metric field");
+    if (isContext(ClauseContext.OUTPUT_COLUMNS)
+        && !(ctx.expressions().getChildCount() == 1
+            && ctx.expressions().getChild(0) instanceof PQL2Parser.IdentifierContext)) {
+      throw new RuntimeException(
+          funcCall + ": aggregate function parameter must be a metric field");
+    } else if (isContext(ClauseContext.GROUP_BY)
+        && !(ctx.expressions().getChildCount() == 1
+            && ctx.expressions().getChild(0) instanceof PQL2Parser.ConstantContext
+            && ((PQL2Parser.ConstantContext) ctx.expressions().getChild(0)).literal()
+                instanceof PQL2Parser.IntegerLiteralContext)) {
+      throw new RuntimeException(
+          funcCall + ": granularity function parameter must be a int number");
     }
 
     setText(ctx, funcCall);
@@ -236,13 +258,20 @@ public class PinotSqlListener extends PQL2BaseListener {
    function
   */
   @Override
-  public void exitFunction(PQL2Parser.FunctionContext ctx) {
+  public void enterFunction(PQL2Parser.FunctionContext ctx) {
     String funcName = ctx.IDENTIFIER().getText();
-    if (!FUNCTIONS.contains(funcName.toUpperCase())) {
-      throw new RuntimeException(funcName + ": function not supported");
+    if (isContext(ClauseContext.OUTPUT_COLUMNS)
+        && !AGGREGATE_FUNCTIONS.contains(funcName.toUpperCase())) {
+      throw new RuntimeException(funcName + ": aggregate function not supported");
+    } else if (isContext(ClauseContext.GROUP_BY)
+        && !GRANULARITY_FUNCTIONS.contains(funcName.toUpperCase())) {
+      throw new RuntimeException(funcName + ": granularity function not supported");
     }
+  }
 
-    setText(ctx, funcName);
+  @Override
+  public void exitFunction(PQL2Parser.FunctionContext ctx) {
+    setText(ctx, ctx.IDENTIFIER().getText());
   }
 
   /*
@@ -297,8 +326,7 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
 
   @Override
-  public void enterWhere(PQL2Parser.WhereContext ctx) {
-  }
+  public void enterWhere(PQL2Parser.WhereContext ctx) {}
 
   @Override
   public void exitWhere(PQL2Parser.WhereContext ctx) {
@@ -306,8 +334,15 @@ public class PinotSqlListener extends PQL2BaseListener {
   }
 
   @Override
+  public void enterGroupBy(PQL2Parser.GroupByContext ctx) {
+    inContext(ClauseContext.GROUP_BY);
+  }
+
+  @Override
   public void exitGroupBy(PQL2Parser.GroupByContext ctx) {
     setText(ctx, getText(ctx.groupByClause()));
+
+    upContext(ClauseContext.GROUP_BY);
   }
 
   @Override
@@ -423,8 +458,7 @@ public class PinotSqlListener extends PQL2BaseListener {
    predicate
   */
   @Override
-  public void enterPredicateParenthesisGroup(PQL2Parser.PredicateParenthesisGroupContext ctx) {
-  }
+  public void enterPredicateParenthesisGroup(PQL2Parser.PredicateParenthesisGroupContext ctx) {}
 
   @Override
   public void exitPredicateParenthesisGroup(PQL2Parser.PredicateParenthesisGroupContext ctx) {
@@ -581,6 +615,15 @@ public class PinotSqlListener extends PQL2BaseListener {
   /*
    groupByClause
   */
+  @Override
+  public void enterGroupByClause(PQL2Parser.GroupByClauseContext ctx) {
+    PQL2Parser.ExpressionContext firstExpression = ctx.groupByList().expression(0);
+
+    if (!(ctx.groupByList().expression(0) instanceof PQL2Parser.FunctionCallContext)) {
+      throw new RuntimeException("Group clause first expression must be a granularity function");
+    }
+  }
+
   @Override
   public void exitGroupByClause(PQL2Parser.GroupByClauseContext ctx) {
     List<String> buffer = new ArrayList<>();

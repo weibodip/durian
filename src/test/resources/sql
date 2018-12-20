@@ -10,7 +10,7 @@ WHERE
   AND quuux NOT IN (42, 69)
   OR c is not null)
 GROUP BY
-  minutes_1, bar, baz
+  minutes(2), bar, baz
 HAVING min(foo) > 10 and max(df) < 100
 order by min(a) desc, max(a) asc
 TOP 10
