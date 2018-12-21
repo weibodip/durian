@@ -68,6 +68,10 @@ public class PinotSqlListener extends PQL2BaseListener {
   private static final Set<String> AGGREGATE_FUNCTIONS = new HashSet<>();
   private static final Set<String> GRANULARITY_FUNCTIONS = new HashSet<>();
 
+  public static final String MINUTES = "MINUTES";
+  public static final String HOURS = "HOURS";
+  public static final String DAYS = "DAYS";
+
   static {
     AGGREGATE_FUNCTIONS.add("COUNT");
     AGGREGATE_FUNCTIONS.add("SUM");
@@ -75,9 +79,9 @@ public class PinotSqlListener extends PQL2BaseListener {
     AGGREGATE_FUNCTIONS.add("MIN");
     AGGREGATE_FUNCTIONS.add("AVG");
 
-    GRANULARITY_FUNCTIONS.add("MINUTES");
-    GRANULARITY_FUNCTIONS.add("HOURS");
-    GRANULARITY_FUNCTIONS.add("DAYS");
+    GRANULARITY_FUNCTIONS.add(MINUTES);
+    GRANULARITY_FUNCTIONS.add(HOURS);
+    GRANULARITY_FUNCTIONS.add(DAYS);
   }
 
   private static final String BOOLEAN_OPERATOR_AND = "AND";
@@ -101,17 +105,6 @@ public class PinotSqlListener extends PQL2BaseListener {
 
   private static final String FDATE_BEGIN_TIME = "$_FDATE_BEGIN_TIME";
   private static final String FDATE_END_TIME = "$_FDATE_END_TIME";
-
-  private long beginTime;
-  private long endTime;
-
-  public long getBeginTime() {
-    return beginTime;
-  }
-
-  public long getEndTime() {
-    return endTime;
-  }
 
   /*
    selectStatement
@@ -170,7 +163,6 @@ public class PinotSqlListener extends PQL2BaseListener {
   /*
    outputColumns
   */
-
   @Override
   public void enterStarColumnList(PQL2Parser.StarColumnListContext ctx) {
     throw new RuntimeException("select *: not supported");
@@ -254,32 +246,58 @@ public class PinotSqlListener extends PQL2BaseListener {
 
   @Override
   public void exitFunctionCall(PQL2Parser.FunctionCallContext ctx) {
+    String functionName = getText(ctx.function());
+    String functionParams = "";
+    if (ctx.expressions() != null) {
+      functionParams = getText(ctx.expressions());
+    }
+
+    if (isContext(ClauseContext.OUTPUT_COLUMNS)) {
+      if (!(ctx.expressions().getChildCount() == 1
+          && ctx.expressions().getChild(0) instanceof PQL2Parser.IdentifierContext)) {
+        throw new RuntimeException(
+            functionName + ": aggregate function parameter must be a metric field");
+      }
+    } else if (isContext(ClauseContext.GROUP_BY)) {
+      if (!(ctx.expressions().getChildCount() == 1
+          && ctx.expressions().getChild(0) instanceof PQL2Parser.ConstantContext
+          && ((PQL2Parser.ConstantContext) ctx.expressions().getChild(0)).literal()
+              instanceof PQL2Parser.IntegerLiteralContext)) {
+        throw new RuntimeException(
+            functionName + ": granularity function parameter must be a int number");
+      }
+
+      String granularityTimeUnit = functionName;
+      int granularityTimeSize = Integer.valueOf(functionParams);
+
+      analysis.setGranularityTimeUnit(granularityTimeUnit);
+      analysis.setGranularityTimeSize(granularityTimeSize);
+
+      functionName = "dateTimeConvert";
+
+      List<String> params = new ArrayList<>();
+
+      params.add(IDENTIFIER_FDATE);
+      params.add("'1:MILLISECONDS:EPOCH'");
+      params.add("'1:MILLISECONDS:EPOCH'");
+
+      if (granularityTimeUnit.equals(MINUTES)) {
+        params.add("'" + granularityTimeSize + ":" + granularityTimeUnit + "'");
+      }
+
+      functionParams = StringUtils.join(params, Symbols.COMMA + Symbols.SPACE);
+    }
+
     StringBuilder buffer = new StringBuilder();
 
-    buffer.append(getText(ctx.function()));
+    buffer.append(functionName);
     buffer.append("(");
-    if (ctx.expressions() != null) {
-      buffer.append(getText(ctx.expressions()));
+    if (functionParams != null) {
+      buffer.append(functionParams);
     }
     buffer.append(")");
 
-    String funcCall = buffer.toString();
-
-    if (isContext(ClauseContext.OUTPUT_COLUMNS)
-        && !(ctx.expressions().getChildCount() == 1
-            && ctx.expressions().getChild(0) instanceof PQL2Parser.IdentifierContext)) {
-      throw new RuntimeException(
-          funcCall + ": aggregate function parameter must be a metric field");
-    } else if (isContext(ClauseContext.GROUP_BY)
-        && !(ctx.expressions().getChildCount() == 1
-            && ctx.expressions().getChild(0) instanceof PQL2Parser.ConstantContext
-            && ((PQL2Parser.ConstantContext) ctx.expressions().getChild(0)).literal()
-                instanceof PQL2Parser.IntegerLiteralContext)) {
-      throw new RuntimeException(
-          funcCall + ": granularity function parameter must be a int number");
-    }
-
-    setText(ctx, funcCall);
+    setText(ctx, buffer.toString());
   }
 
   @Override
@@ -306,6 +324,7 @@ public class PinotSqlListener extends PQL2BaseListener {
   @Override
   public void enterFunction(PQL2Parser.FunctionContext ctx) {
     String funcName = ctx.IDENTIFIER().getText().toUpperCase();
+
     if (isContext(ClauseContext.OUTPUT_COLUMNS) && !AGGREGATE_FUNCTIONS.contains(funcName)) {
       throw new RuntimeException(funcName + ": aggregate function not supported");
     } else if (isContext(ClauseContext.GROUP_BY) && !GRANULARITY_FUNCTIONS.contains(funcName)) {
@@ -466,8 +485,9 @@ public class PinotSqlListener extends PQL2BaseListener {
     }
 
     try {
-      beginTime = DatetimeUtil.COMMON_DATETIME_FORMAT.parse(secondExpressionText).getTime();
-      endTime = DatetimeUtil.COMMON_DATETIME_FORMAT.parse(thirdExpressionText).getTime();
+      analysis.setBeginTime(
+          DatetimeUtil.COMMON_DATETIME_FORMAT.parse(secondExpressionText).getTime());
+      analysis.setEndTime(DatetimeUtil.COMMON_DATETIME_FORMAT.parse(thirdExpressionText).getTime());
     } catch (ParseException e) {
       throw new RuntimeException(e);
     }

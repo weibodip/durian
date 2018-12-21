@@ -3,14 +3,14 @@ SELECT
 FROM
   myTable
 WHERE
-  fdate between '2018-12-06 00:00:00' and '2018-12-07 00:00:00'
+  fdate between '2018-12-06 00:00:00' and '2018-12-08 00:00:00'
   AND (foo = 'foo'
   AND bar BETWEEN 1 AND 20
   OR baz < 42 AND quux.abctest IN ('hello', 'goodbye')
   AND quuux NOT IN (42, 69)
   OR c is not null)
 GROUP BY
-  minutes(2), bar, baz
+  hours(25), bar, baz
 HAVING min(foo) > 10 and max(df) < 100
 order by min(a) desc, max(a) asc
 TOP 10
