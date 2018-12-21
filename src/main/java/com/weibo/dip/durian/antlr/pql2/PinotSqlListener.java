@@ -691,10 +691,18 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void enterGroupByClause(PQL2Parser.GroupByClauseContext ctx) {
-    PQL2Parser.ExpressionContext firstExpression = ctx.groupByList().expression(0);
+    for (int index = 0; index < ctx.groupByList().expression().size(); index++) {
+      PQL2Parser.ExpressionContext expressionContext = ctx.groupByList().expression(index);
 
-    if (!(ctx.groupByList().expression(0) instanceof PQL2Parser.FunctionCallContext)) {
-      throw new RuntimeException("Group clause first expression must be a granularity function");
+      if (index == 0) {
+        if (!(expressionContext instanceof PQL2Parser.FunctionCallContext)) {
+          throw new RuntimeException("Group clause first expression must be a function");
+        }
+      } else {
+        if (!(expressionContext instanceof PQL2Parser.IdentifierContext)) {
+          throw new RuntimeException("Group clause expression must be a dimession, except first");
+        }
+      }
     }
   }
 
