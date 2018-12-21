@@ -100,6 +100,29 @@ public class PinotSqlListener extends PQL2BaseListener {
   /*
    selectStatement
   */
+
+  @Override
+  public void enterSelect(PQL2Parser.SelectContext ctx) {
+    boolean hasWhere = false;
+    boolean hasGroup = false;
+
+    for (PQL2Parser.OptionalClauseContext optionalClauseContext : ctx.optionalClause()) {
+      if (optionalClauseContext instanceof PQL2Parser.WhereContext) {
+        hasWhere = true;
+      } else if (optionalClauseContext instanceof PQL2Parser.GroupByContext) {
+        hasGroup = true;
+      }
+    }
+
+    if (!hasWhere) {
+      throw new RuntimeException("sql: must have where clause");
+    }
+
+    if (!hasGroup) {
+      throw new RuntimeException("sql: must have groupBy clause");
+    }
+  }
+
   @Override
   public void exitSelect(PQL2Parser.SelectContext ctx) {
     StringBuilder buffer = new StringBuilder();

@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 /** @author yurun */
 public class PinotSqlAnalyzer {
-  public void analyze(String sql) throws RuntimeException {
+  public Analysis analyze(String sql) throws RuntimeException {
     CharStream input = CharStreams.fromString(sql);
 
     PQL2Lexer lexer = new PQL2Lexer(input);
@@ -28,5 +28,7 @@ public class PinotSqlAnalyzer {
     PinotSqlListener listener = new PinotSqlListener();
 
     walker.walk(listener, tree);
+
+    return listener.getAnalysis();
   }
 }

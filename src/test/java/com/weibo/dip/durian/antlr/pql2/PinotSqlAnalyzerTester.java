@@ -20,10 +20,11 @@ public class PinotSqlAnalyzerTester {
                 .map(String::trim)
                 .iterator(),
             Symbols.SPACE);
-    LOGGER.info("sql: {}", sql);
 
     PinotSqlAnalyzer analyzer = new PinotSqlAnalyzer();
 
-    analyzer.analyze(sql);
+    Analysis analysis = analyzer.analyze(sql);
+
+    LOGGER.info("sql: " + analysis.getSql());
   }
 }
