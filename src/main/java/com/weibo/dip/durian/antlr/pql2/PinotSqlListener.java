@@ -1,6 +1,8 @@
 package com.weibo.dip.durian.antlr.pql2;
 
 import com.weibo.dip.durian.Symbols;
+import com.weibo.dip.durian.util.DatetimeUtil;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -95,6 +97,20 @@ public class PinotSqlListener extends PQL2BaseListener {
 
   private String getText(RuleContext context) {
     return texts.get(context);
+  }
+
+  private static final String FDATE_BEGIN_TIME = "$_FDATE_BEGIN_TIME";
+  private static final String FDATE_END_TIME = "$_FDATE_END_TIME";
+
+  private long beginTime;
+  private long endTime;
+
+  public long getBeginTime() {
+    return beginTime;
+  }
+
+  public long getEndTime() {
+    return endTime;
   }
 
   /*
@@ -401,8 +417,11 @@ public class PinotSqlListener extends PQL2BaseListener {
   /*
    whereClause
   */
+
   @Override
-  public void exitWhereClause(PQL2Parser.WhereClauseContext ctx) {
+  public void enterWhereClause(PQL2Parser.WhereClauseContext ctx) {
+    inContext(ClauseContext.WHERE);
+
     PQL2Parser.PredicateContext firstPredicate = ctx.predicateList().predicate(0);
 
     String firstPredicateText = getText(firstPredicate);
@@ -431,17 +450,26 @@ public class PinotSqlListener extends PQL2BaseListener {
               + ": Where clause first predicate must be fdate between '...' and '...'");
     }
 
+    String firstExpressionText = firstExpression.getText();
+
+    String secondExpressionText =
+        secondExpression.getText().substring(1, secondExpression.getText().length() - 1);
+    String thirdExpressionText =
+        thirdExpression.getText().substring(1, thirdExpression.getText().length() - 1);
+
     if (!(firstExpression.getText().equals(IDENTIFIER_FDATE)
-        && FDATE_PATTERN
-            .matcher(
-                secondExpression.getText().substring(1, secondExpression.getText().length() - 1))
-            .matches()
-        && FDATE_PATTERN
-            .matcher(thirdExpression.getText().substring(1, thirdExpression.getText().length() - 1))
-            .matches())) {
+        && FDATE_PATTERN.matcher(secondExpressionText).matches()
+        && FDATE_PATTERN.matcher(thirdExpressionText).matches())) {
       throw new RuntimeException(
           firstPredicateText
               + ": Where clause first predicate must be fdate between 'yyyy-MM-dd HH:mm:ss' and 'yyyy-MM-dd HH:mm:ss'");
+    }
+
+    try {
+      beginTime = DatetimeUtil.COMMON_DATETIME_FORMAT.parse(secondExpressionText).getTime();
+      endTime = DatetimeUtil.COMMON_DATETIME_FORMAT.parse(thirdExpressionText).getTime();
+    } catch (ParseException e) {
+      throw new RuntimeException(e);
     }
 
     if (ctx.predicateList().predicate().size() > 1) {
@@ -455,7 +483,10 @@ public class PinotSqlListener extends PQL2BaseListener {
             firstBooleanOperatorText + ": Where clause first boolean operator must be and");
       }
     }
+  }
 
+  @Override
+  public void exitWhereClause(PQL2Parser.WhereClauseContext ctx) {
     StringBuilder buffer = new StringBuilder();
 
     buffer.append(ctx.WHERE().getText().toUpperCase());
@@ -463,6 +494,8 @@ public class PinotSqlListener extends PQL2BaseListener {
     buffer.append(getText(ctx.predicateList()));
 
     setText(ctx, buffer.toString());
+
+    upContext(ClauseContext.WHERE);
   }
 
   /*
@@ -597,11 +630,24 @@ public class PinotSqlListener extends PQL2BaseListener {
   public void exitBetweenClause(PQL2Parser.BetweenClauseContext ctx) {
     List<String> buffer = new ArrayList<>();
 
-    buffer.add(getText(ctx.expression(0)));
+    String firstExpressionText = getText(ctx.expression(0));
+
+    buffer.add(firstExpressionText);
     buffer.add(ctx.BETWEEN().getText().toUpperCase());
-    buffer.add(getText(ctx.expression(1)));
+
+    if (isContext(ClauseContext.WHERE) && firstExpressionText.equals(IDENTIFIER_FDATE)) {
+      buffer.add(FDATE_BEGIN_TIME);
+    } else {
+      buffer.add(getText(ctx.expression(1)));
+    }
+
     buffer.add(ctx.AND().getText().toUpperCase());
-    buffer.add(getText(ctx.expression(2)));
+
+    if (isContext(ClauseContext.WHERE) && firstExpressionText.equals(IDENTIFIER_FDATE)) {
+      buffer.add(FDATE_END_TIME);
+    } else {
+      buffer.add(getText(ctx.expression(2)));
+    }
 
     setText(ctx, StringUtils.join(buffer, Symbols.SPACE));
   }
