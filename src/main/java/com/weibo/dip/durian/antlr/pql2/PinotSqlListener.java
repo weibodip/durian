@@ -17,6 +17,12 @@ import org.slf4j.LoggerFactory;
 public class PinotSqlListener extends PQL2BaseListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(PinotSqlListener.class);
 
+  private Analysis analysis = new Analysis();
+
+  public Analysis getAnalysis() {
+    return analysis;
+  }
+
   private enum ClauseContext {
     /*
      optionalClause
@@ -61,6 +67,7 @@ public class PinotSqlListener extends PQL2BaseListener {
   private static final Set<String> GRANULARITY_FUNCTIONS = new HashSet<>();
 
   static {
+    AGGREGATE_FUNCTIONS.add("COUNT");
     AGGREGATE_FUNCTIONS.add("SUM");
     AGGREGATE_FUNCTIONS.add("MAX");
     AGGREGATE_FUNCTIONS.add("MIN");
@@ -97,7 +104,7 @@ public class PinotSqlListener extends PQL2BaseListener {
   public void exitSelect(PQL2Parser.SelectContext ctx) {
     StringBuilder buffer = new StringBuilder();
 
-    buffer.append(ctx.SELECT().getText());
+    buffer.append(ctx.SELECT().getText().toUpperCase());
 
     if (ctx.topClause() != null) {
       buffer.append(Symbols.SPACE);
@@ -108,7 +115,7 @@ public class PinotSqlListener extends PQL2BaseListener {
     buffer.append(getText(ctx.outputColumns()));
 
     buffer.append(Symbols.SPACE);
-    buffer.append(ctx.FROM().getText());
+    buffer.append(ctx.FROM().getText().toUpperCase());
 
     buffer.append(Symbols.SPACE);
     buffer.append(getText(ctx.tableName()));
@@ -118,7 +125,7 @@ public class PinotSqlListener extends PQL2BaseListener {
       buffer.append(getText(ctx.optionalClause(index)));
     }
 
-    LOGGER.info(buffer.toString());
+    analysis.setSql(buffer.toString());
   }
 
   /*
@@ -164,7 +171,7 @@ public class PinotSqlListener extends PQL2BaseListener {
     }
 
     buffer.append(Symbols.SPACE);
-    buffer.append(ctx.AS().getText());
+    buffer.append(ctx.AS().getText().toUpperCase());
     buffer.append(Symbols.SPACE);
 
     String alias;
@@ -259,19 +266,17 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void enterFunction(PQL2Parser.FunctionContext ctx) {
-    String funcName = ctx.IDENTIFIER().getText();
-    if (isContext(ClauseContext.OUTPUT_COLUMNS)
-        && !AGGREGATE_FUNCTIONS.contains(funcName.toUpperCase())) {
+    String funcName = ctx.IDENTIFIER().getText().toUpperCase();
+    if (isContext(ClauseContext.OUTPUT_COLUMNS) && !AGGREGATE_FUNCTIONS.contains(funcName)) {
       throw new RuntimeException(funcName + ": aggregate function not supported");
-    } else if (isContext(ClauseContext.GROUP_BY)
-        && !GRANULARITY_FUNCTIONS.contains(funcName.toUpperCase())) {
+    } else if (isContext(ClauseContext.GROUP_BY) && !GRANULARITY_FUNCTIONS.contains(funcName)) {
       throw new RuntimeException(funcName + ": granularity function not supported");
     }
   }
 
   @Override
   public void exitFunction(PQL2Parser.FunctionContext ctx) {
-    setText(ctx, ctx.IDENTIFIER().getText());
+    setText(ctx, ctx.IDENTIFIER().getText().toUpperCase());
   }
 
   /*
@@ -422,7 +427,7 @@ public class PinotSqlListener extends PQL2BaseListener {
 
       String firstBooleanOperatorText = getText(firstBooleanOperator);
 
-      if (!firstBooleanOperator.getText().equals(BOOLEAN_OPERATOR_AND)) {
+      if (!firstBooleanOperator.getText().toUpperCase().equals(BOOLEAN_OPERATOR_AND)) {
         throw new RuntimeException(
             firstBooleanOperatorText + ": Where clause first boolean operator must be and");
       }
@@ -430,7 +435,7 @@ public class PinotSqlListener extends PQL2BaseListener {
 
     StringBuilder buffer = new StringBuilder();
 
-    buffer.append(ctx.WHERE().getText());
+    buffer.append(ctx.WHERE().getText().toUpperCase());
     buffer.append(Symbols.SPACE);
     buffer.append(getText(ctx.predicateList()));
 
@@ -507,11 +512,11 @@ public class PinotSqlListener extends PQL2BaseListener {
 
     if (ctx.NOT() != null) {
       buffer.append(Symbols.SPACE);
-      buffer.append(ctx.NOT().getText());
+      buffer.append(ctx.NOT().getText().toUpperCase());
     }
 
     buffer.append(Symbols.SPACE);
-    buffer.append(ctx.IN().getText());
+    buffer.append(ctx.IN().getText().toUpperCase());
 
     buffer.append(Symbols.SPACE);
     buffer.append(Symbols.LEFT_PARENTHESIS);
@@ -537,11 +542,11 @@ public class PinotSqlListener extends PQL2BaseListener {
     List<String> buffer = new ArrayList<>();
 
     buffer.add(getText(ctx.expression()));
-    buffer.add(ctx.IS().getText());
+    buffer.add(ctx.IS().getText().toUpperCase());
     if (ctx.NOT() != null) {
-      buffer.add(ctx.NOT().getText());
+      buffer.add(ctx.NOT().getText().toUpperCase());
     }
-    buffer.add(ctx.NULL().getText());
+    buffer.add(ctx.NULL().getText().toUpperCase());
 
     setText(ctx, StringUtils.join(buffer, Symbols.SPACE));
   }
@@ -570,9 +575,9 @@ public class PinotSqlListener extends PQL2BaseListener {
     List<String> buffer = new ArrayList<>();
 
     buffer.add(getText(ctx.expression(0)));
-    buffer.add(ctx.BETWEEN().getText());
+    buffer.add(ctx.BETWEEN().getText().toUpperCase());
     buffer.add(getText(ctx.expression(1)));
-    buffer.add(ctx.AND().getText());
+    buffer.add(ctx.AND().getText().toUpperCase());
     buffer.add(getText(ctx.expression(2)));
 
     setText(ctx, StringUtils.join(buffer, Symbols.SPACE));
@@ -585,7 +590,7 @@ public class PinotSqlListener extends PQL2BaseListener {
   public void exitRegexpLikeClause(PQL2Parser.RegexpLikeClauseContext ctx) {
     StringBuilder buffer = new StringBuilder();
 
-    buffer.append(ctx.REGEXP_LIKE().getText());
+    buffer.append(ctx.REGEXP_LIKE().getText().toUpperCase());
     buffer.append(Symbols.SPACE);
     buffer.append(Symbols.LEFT_PARENTHESIS);
     buffer.append(getText(ctx.expression()));
@@ -628,8 +633,8 @@ public class PinotSqlListener extends PQL2BaseListener {
   public void exitGroupByClause(PQL2Parser.GroupByClauseContext ctx) {
     List<String> buffer = new ArrayList<>();
 
-    buffer.add(ctx.GROUP().getText());
-    buffer.add(ctx.BY().getText());
+    buffer.add(ctx.GROUP().getText().toUpperCase());
+    buffer.add(ctx.BY().getText().toUpperCase());
     buffer.add(getText(ctx.groupByList()));
 
     setText(ctx, StringUtils.join(buffer, Symbols.SPACE));
@@ -654,7 +659,8 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void exitHavingClause(PQL2Parser.HavingClauseContext ctx) {
-    setText(ctx, ctx.HAVING().getText() + Symbols.SPACE + getText(ctx.predicateList()));
+    setText(
+        ctx, ctx.HAVING().getText().toUpperCase() + Symbols.SPACE + getText(ctx.predicateList()));
   }
 
   /*
@@ -664,8 +670,8 @@ public class PinotSqlListener extends PQL2BaseListener {
   public void exitOrderByClause(PQL2Parser.OrderByClauseContext ctx) {
     List<String> buffer = new ArrayList<>();
 
-    buffer.add(ctx.ORDER().getText());
-    buffer.add(ctx.BY().getText());
+    buffer.add(ctx.ORDER().getText().toUpperCase());
+    buffer.add(ctx.BY().getText().toUpperCase());
     buffer.add(getText(ctx.orderByList()));
 
     setText(ctx, StringUtils.join(buffer, Symbols.SPACE));
@@ -714,7 +720,8 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void exitTopClause(PQL2Parser.TopClauseContext ctx) {
-    setText(ctx, ctx.TOP().getText() + Symbols.SPACE + ctx.INTEGER_LITERAL().getText());
+    setText(
+        ctx, ctx.TOP().getText().toUpperCase() + Symbols.SPACE + ctx.INTEGER_LITERAL().getText());
   }
 
   /*
@@ -724,7 +731,7 @@ public class PinotSqlListener extends PQL2BaseListener {
   public void exitLimitClause(PQL2Parser.LimitClauseContext ctx) {
     StringBuilder buffer = new StringBuilder();
 
-    buffer.append(ctx.LIMIT().getText());
+    buffer.append(ctx.LIMIT().getText().toUpperCase());
     buffer.append(Symbols.SPACE);
 
     List<String> integers = new ArrayList<>();
@@ -745,7 +752,7 @@ public class PinotSqlListener extends PQL2BaseListener {
   public void exitOptionListClause(PQL2Parser.OptionListClauseContext ctx) {
     StringBuilder buffer = new StringBuilder();
 
-    buffer.append(ctx.OPTION().getText());
+    buffer.append(ctx.OPTION().getText().toUpperCase());
     buffer.append(Symbols.SPACE);
     buffer.append(Symbols.LEFT_PARENTHESIS);
 
