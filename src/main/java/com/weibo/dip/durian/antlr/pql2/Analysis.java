@@ -1,5 +1,9 @@
 package com.weibo.dip.durian.antlr.pql2;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
+
 public class Analysis {
   private String sql;
 
@@ -8,6 +12,17 @@ public class Analysis {
 
   private String granularityTimeUnit;
   private int granularityTimeSize;
+
+  private String outputColumns;
+  private String tableName;
+  private String where;
+  private String groupBy;
+  private String having;
+  private String orderBy;
+  private String top;
+  private String limit;
+
+  private List<String> aggregateFunctions = new ArrayList<>();
 
   public String getSql() {
     return sql;
@@ -47,5 +62,101 @@ public class Analysis {
 
   public void setGranularityTimeSize(int granularityTimeSize) {
     this.granularityTimeSize = granularityTimeSize;
+  }
+
+  public List<String> getAggregateFunctions() {
+    return aggregateFunctions;
+  }
+
+  public void addAggregateFunctions(String aggregateFunction) {
+    aggregateFunctions.add(aggregateFunction);
+  }
+
+  public String getOutputColumns() {
+    return outputColumns;
+  }
+
+  public void setOutputColumns(String outputColumns) {
+    this.outputColumns = outputColumns;
+  }
+
+  public String getTableName() {
+    return tableName;
+  }
+
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
+  }
+
+  public String getWhere() {
+    return where;
+  }
+
+  public void setWhere(String where) {
+    this.where = where;
+  }
+
+  public boolean hasWhere() {
+    return StringUtils.isNotEmpty(where);
+  }
+
+  public String getGroupBy() {
+    return groupBy;
+  }
+
+  public void setGroupBy(String groupBy) {
+    this.groupBy = groupBy;
+  }
+
+  public boolean hasGroupBy() {
+    return StringUtils.isNotEmpty(groupBy);
+  }
+
+  public String getHaving() {
+    return having;
+  }
+
+  public void setHaving(String having) {
+    this.having = having;
+  }
+
+  public boolean hasHaving() {
+    return StringUtils.isNotEmpty(having);
+  }
+
+  public String getOrderBy() {
+    return orderBy;
+  }
+
+  public boolean hasOrderBy() {
+    return StringUtils.isNotEmpty(orderBy);
+  }
+
+  public void setOrderBy(String orderBy) {
+    this.orderBy = orderBy;
+  }
+
+  public String getTop() {
+    return top;
+  }
+
+  public void setTop(String top) {
+    this.top = top;
+  }
+
+  public boolean hasTop() {
+    return StringUtils.isNotEmpty(top);
+  }
+
+  public String getLimit() {
+    return limit;
+  }
+
+  public void setLimit(String limit) {
+    this.limit = limit;
+  }
+
+  public boolean hasLimit() {
+    return StringUtils.isNotEmpty(limit);
   }
 }

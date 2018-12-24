@@ -1,18 +1,14 @@
 SELECT
-  sum(a)/(sum(b) - max(c)) as custom, MIN(foo) as min_foo, max(foo) as max_foo
+  sum(MessagesInPerSec)/(sum(BytesOutPerSec) - max(BytesInPerSec)) as custom_foo, MIN(MessagesInPerSec) as min_foo, max(MessagesInPerSec) as max_foo
 FROM
-  myTable
+  dip_kafka-monitor
 WHERE
-  fdate between '2018-12-06 00:00:00' and '2018-12-08 00:00:00'
-  AND (foo = 'foo'
-  AND bar BETWEEN 1 AND 20
-  OR baz < 42 AND quux.abctest IN ('hello', 'goodbye')
-  AND quuux NOT IN (42, 69)
-  OR c is not null)
+  fdate between '2018-12-22 00:00:00' and '2018-12-25 00:00:00'
+  AND cluster = 'aliyun-dip'
 GROUP BY
-  hours(25), bar, baz
-HAVING min(foo) > 10 and max(df) < 100
-order by min(a) desc, max(a) asc
+  hours(25), cluster, topic
+
+HAVING min_foo > 10 and max_foo < 10000000000
+order by max_foo desc, min_foo asc
 TOP 10
 limit 5, 10
-option (a = b)

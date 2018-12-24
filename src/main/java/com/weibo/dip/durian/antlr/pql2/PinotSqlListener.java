@@ -103,8 +103,8 @@ public class PinotSqlListener extends PQL2BaseListener {
     return texts.get(context);
   }
 
-  private static final String FDATE_BEGIN_TIME = "$_FDATE_BEGIN_TIME";
-  private static final String FDATE_END_TIME = "$_FDATE_END_TIME";
+  public static final String FDATE_BEGIN_TIME = "$_FDATE_BEGIN_TIME";
+  public static final String FDATE_END_TIME = "$_FDATE_END_TIME";
 
   /*
    selectStatement
@@ -181,7 +181,11 @@ public class PinotSqlListener extends PQL2BaseListener {
       buffer.add(getText(ctx.outputColumnProjection(index)));
     }
 
-    setText(ctx, StringUtils.join(buffer, Symbols.COMMA + Symbols.SPACE));
+    String outputColumns = StringUtils.join(buffer, Symbols.COMMA + Symbols.SPACE);
+
+    setText(ctx, outputColumns);
+
+    analysis.setOutputColumns(outputColumns);
 
     upContext(ClauseContext.OUTPUT_COLUMNS);
   }
@@ -281,9 +285,7 @@ public class PinotSqlListener extends PQL2BaseListener {
       params.add("'1:MILLISECONDS:EPOCH'");
       params.add("'1:MILLISECONDS:EPOCH'");
 
-      if (granularityTimeUnit.equals(MINUTES)) {
-        params.add("'" + granularityTimeSize + ":" + granularityTimeUnit + "'");
-      }
+      params.add("'" + granularityTimeSize + ":" + granularityTimeUnit + "'");
 
       functionParams = StringUtils.join(params, Symbols.COMMA + Symbols.SPACE);
     }
@@ -297,7 +299,15 @@ public class PinotSqlListener extends PQL2BaseListener {
     }
     buffer.append(")");
 
-    setText(ctx, buffer.toString());
+    String functionCallText = buffer.toString();
+
+    setText(ctx, functionCallText);
+
+    if (isContext(ClauseContext.OUTPUT_COLUMNS)) {
+      if (!analysis.getAggregateFunctions().contains(functionCallText)) {
+        analysis.addAggregateFunctions(functionCallText);
+      }
+    }
   }
 
   @Override
@@ -382,6 +392,7 @@ public class PinotSqlListener extends PQL2BaseListener {
     String tableName = ctx.getText();
 
     setText(ctx, tableName);
+    analysis.setTableName(tableName);
   }
 
   /*
@@ -511,7 +522,11 @@ public class PinotSqlListener extends PQL2BaseListener {
 
     buffer.append(ctx.WHERE().getText().toUpperCase());
     buffer.append(Symbols.SPACE);
-    buffer.append(getText(ctx.predicateList()));
+
+    String where = getText(ctx.predicateList());
+
+    buffer.append(where);
+    analysis.setWhere(where);
 
     setText(ctx, buffer.toString());
 
@@ -732,7 +747,11 @@ public class PinotSqlListener extends PQL2BaseListener {
 
     buffer.add(ctx.GROUP().getText().toUpperCase());
     buffer.add(ctx.BY().getText().toUpperCase());
-    buffer.add(getText(ctx.groupByList()));
+
+    String groupBy = getText(ctx.groupByList());
+
+    buffer.add(groupBy);
+    analysis.setGroupBy(groupBy);
 
     setText(ctx, StringUtils.join(buffer, Symbols.SPACE));
   }
@@ -756,8 +775,10 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void exitHavingClause(PQL2Parser.HavingClauseContext ctx) {
-    setText(
-        ctx, ctx.HAVING().getText().toUpperCase() + Symbols.SPACE + getText(ctx.predicateList()));
+    String having = getText(ctx.predicateList());
+
+    setText(ctx, ctx.HAVING().getText().toUpperCase() + Symbols.SPACE + having);
+    analysis.setHaving(having);
   }
 
   /*
@@ -769,7 +790,11 @@ public class PinotSqlListener extends PQL2BaseListener {
 
     buffer.add(ctx.ORDER().getText().toUpperCase());
     buffer.add(ctx.BY().getText().toUpperCase());
-    buffer.add(getText(ctx.orderByList()));
+
+    String orderBy = getText(ctx.orderByList());
+
+    buffer.add(orderBy);
+    analysis.setOrderBy(orderBy);
 
     setText(ctx, StringUtils.join(buffer, Symbols.SPACE));
   }
@@ -817,8 +842,10 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void exitTopClause(PQL2Parser.TopClauseContext ctx) {
-    setText(
-        ctx, ctx.TOP().getText().toUpperCase() + Symbols.SPACE + ctx.INTEGER_LITERAL().getText());
+    String top = ctx.INTEGER_LITERAL().getText();
+
+    setText(ctx, ctx.TOP().getText().toUpperCase() + Symbols.SPACE + top);
+    analysis.setTop(top);
   }
 
   /*
@@ -837,7 +864,10 @@ public class PinotSqlListener extends PQL2BaseListener {
       integers.add(ctx.INTEGER_LITERAL(index).getText());
     }
 
-    buffer.append(StringUtils.join(integers, Symbols.COMMA + Symbols.SPACE));
+    String limit = StringUtils.join(integers, Symbols.COMMA + Symbols.SPACE);
+
+    buffer.append(limit);
+    analysis.setLimit(limit);
 
     setText(ctx, buffer.toString());
   }
