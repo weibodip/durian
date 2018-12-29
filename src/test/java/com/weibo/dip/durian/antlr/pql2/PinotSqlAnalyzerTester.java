@@ -150,7 +150,7 @@ public class PinotSqlAnalyzerTester {
     return buffer.toString();
   }
 
-  private static class Selector implements Callable<Object> {
+  private static class Selector implements Callable<TimeBucketDataTable> {
 
     private Analysis analysis;
 
@@ -164,7 +164,7 @@ public class PinotSqlAnalyzerTester {
     }
 
     @Override
-    public Object call() {
+    public TimeBucketDataTable call() {
       String splitSql = getSplitSql(analysis, beginTime, endTime, false);
       LOGGER.info("splitSql: {}", splitSql);
 
@@ -178,24 +178,36 @@ public class PinotSqlAnalyzerTester {
 
       ResultSetGroup resultSetGroup = CONNECTION.execute(pinotSql);
 
-      System.out.println(resultSetGroup.getResultSetCount());
+      TimeBucketDataTable pinotSqlResultTable =
+          new TimeBucketDataTable(
+              analysis.getTimeBucketName(),
+              analysis.getGroupKeyNames(),
+              analysis.getAggregateFunctions());
 
-      for (int index = 0; index < resultSetGroup.getResultSetCount(); index++) {
-        ResultSet resultSet = resultSetGroup.getResultSet(index);
+      for (int group = 0; group < resultSetGroup.getResultSetCount(); group++) {
+        ResultSet resultSet = resultSetGroup.getResultSet(group);
 
-        LOGGER.info(
-            resultSet.getGroupKeyLength()
-                + "\t"
-                + resultSet.getColumnCount()
-                + "\t"
-                + resultSet.getRowCount());
+        for (int row = 0; row < resultSet.getRowCount(); row++) {
+          long timeBucketValue = resultSet.getGroupKeyLong(row, 0);
+
+          List<String> groupValues = new ArrayList<>();
+          for (int groupKey = 1; groupKey < resultSet.getGroupKeyLength(); groupKey++) {
+            groupValues.add(resultSet.getGroupKeyString(row, groupKey));
+          }
+
+          double columnValue = resultSet.getDouble(row, 0);
+
+          pinotSqlResultTable.addColumn(timeBucketValue, groupValues, columnValue);
+        }
       }
+
+      pinotSqlResultTable.print();
 
       stopwatch.stop();
 
       LOGGER.info("pinot time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
-      return null;
+      return pinotSqlResultTable;
     }
   }
 
@@ -220,6 +232,12 @@ public class PinotSqlAnalyzerTester {
     String analyzeSql = analysis.getSql();
     LOGGER.info("analyze sql: {}", analyzeSql);
 
+    List<String> outputColumnExpressions = analysis.getOutputColumnExpressions();
+    LOGGER.info("outputColumnExpressions: {}", outputColumnExpressions);
+
+    List<String> outputColumnNames = analysis.getOutputColumnNames();
+    LOGGER.info("outputColumnNames: {}", outputColumnNames);
+
     long beginTime = analysis.getBeginTime();
     long endTime = analysis.getEndTime();
     LOGGER.info("beginTime: {}, endTime: {}", beginTime, endTime);
@@ -228,27 +246,38 @@ public class PinotSqlAnalyzerTester {
     int granularityTimeSize = analysis.getGranularityTimeSize();
     LOGGER.info("granularity unit: {}, size: {}", granularityTimeUnit, granularityTimeSize);
 
+    List<String> groupKeyNames = analysis.getGroupKeyNames();
+    LOGGER.info("groupKeyNames: {}", groupKeyNames);
+
     List<Long> timeRanges =
         getTimeRanges(beginTime, endTime, granularityTimeUnit, granularityTimeSize);
     LOGGER.info("timeRanges: {}", timeRanges);
 
-    ExecutorService executors = Executors.newCachedThreadPool();
+    ExecutorService executors = Executors.newFixedThreadPool(1);
 
-    List<Future<Object>> futures = new ArrayList<>();
+    List<Future<TimeBucketDataTable>> futures = new ArrayList<>();
 
     for (int index = 0; index < timeRanges.size() - 1; index++) {
-      Future<Object> future =
+      Future<TimeBucketDataTable> future =
           executors.submit(
-              new Selector(analysis, timeRanges.get(index), timeRanges.get(index + 1)));
+              new Selector(analysis, timeRanges.get(index), timeRanges.get(index + 1) - 1));
 
       futures.add(future);
     }
 
-    for (Future<Object> future : futures) {
-      future.get();
+    TimeBucketDataTable table =
+        new TimeBucketDataTable(
+            analysis.getTimeBucketName(),
+            analysis.getGroupKeyNames(),
+            analysis.getOutputColumnNames());
+
+    for (Future<TimeBucketDataTable> future : futures) {
+      table.merge(future.get());
     }
 
     executors.shutdown();
+
+    table.print();
 
     stopwatch.stop();
 

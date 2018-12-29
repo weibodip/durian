@@ -6,7 +6,7 @@ WHERE
   fdate between '2018-12-22 00:00:00' and '2018-12-25 00:00:00'
   AND cluster = 'aliyun-dip'
 GROUP BY
-  hours(25), cluster, topic
+  hours(24), cluster, topic
 
 HAVING min_foo > 10 and max_foo < 10000000000
 order by max_foo desc, min_foo asc

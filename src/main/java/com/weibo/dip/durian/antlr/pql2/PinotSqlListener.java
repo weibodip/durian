@@ -200,6 +200,7 @@ public class PinotSqlListener extends PQL2BaseListener {
     StringBuilder buffer = new StringBuilder();
 
     buffer.append(expression);
+    analysis.addOutputColumnExpression(expression);
 
     if (ctx.AS() == null) {
       throw new RuntimeException(expression + ": expression must be specified a alias");
@@ -218,6 +219,7 @@ public class PinotSqlListener extends PQL2BaseListener {
     }
 
     buffer.append(alias);
+    analysis.addOutputColumnName(alias);
 
     setText(ctx, buffer.toString());
   }
@@ -764,7 +766,13 @@ public class PinotSqlListener extends PQL2BaseListener {
     List<String> buffer = new ArrayList<>();
 
     for (int index = 0; index < ctx.expression().size(); index++) {
-      buffer.add(getText(ctx.expression(index)));
+      String groupKeyName = getText(ctx.expression(index));
+
+      if (index > 0) {
+        analysis.addGroupKeyName(groupKeyName);
+      }
+
+      buffer.add(groupKeyName);
     }
 
     setText(ctx, StringUtils.join(buffer, Symbols.COMMA + Symbols.SPACE));

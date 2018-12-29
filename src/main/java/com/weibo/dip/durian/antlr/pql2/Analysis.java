@@ -24,6 +24,11 @@ public class Analysis {
 
   private List<String> aggregateFunctions = new ArrayList<>();
 
+  private List<String> outputColumnExpressions = new ArrayList<>();
+  private List<String> outputColumnNames = new ArrayList<>();
+  private String timeBucketName = "timeBucket";
+  private List<String> groupKeyNames = new ArrayList<>();
+
   public String getSql() {
     return sql;
   }
@@ -158,5 +163,33 @@ public class Analysis {
 
   public boolean hasLimit() {
     return StringUtils.isNotEmpty(limit);
+  }
+
+  public List<String> getOutputColumnExpressions() {
+    return outputColumnExpressions;
+  }
+
+  public void addOutputColumnExpression(String expression) {
+    outputColumnExpressions.add(expression);
+  }
+
+  public List<String> getOutputColumnNames() {
+    return outputColumnNames;
+  }
+
+  public void addOutputColumnName(String name) {
+    outputColumnNames.add(name);
+  }
+
+  public String getTimeBucketName() {
+    return timeBucketName;
+  }
+
+  public List<String> getGroupKeyNames() {
+    return groupKeyNames;
+  }
+
+  public void addGroupKeyName(String name) {
+    groupKeyNames.add(name);
   }
 }
