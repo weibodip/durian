@@ -3,7 +3,7 @@ SELECT
 FROM
   dip_kafka-monitor
 WHERE
-  fdate between '2018-12-22 00:00:00' and '2018-12-25 00:00:00'
+  fdate between '2019-01-04 00:00:00' and '2019-01-07 00:00:00'
   AND cluster = 'aliyun-dip'
 GROUP BY
   hours(24), cluster, topic

@@ -105,11 +105,20 @@ public class PinotSqlAnalyzerTester {
     buffer.append(Symbols.SPACE);
     buffer.append("WHERE");
     buffer.append(Symbols.SPACE);
-    buffer.append(
-        analysis
-            .getWhere()
-            .replace(PinotSqlListener.FDATE_BEGIN_TIME, String.valueOf(beginTime))
-            .replace(PinotSqlListener.FDATE_END_TIME, String.valueOf(endTime)));
+    if (!isPinot) {
+      buffer.append(
+          analysis
+              .getWhere()
+              .replace(PinotSqlListener.FDATE_BEGIN_TIME, String.valueOf(beginTime))
+              .replace(PinotSqlListener.FDATE_END_TIME, String.valueOf(endTime)));
+    } else {
+      buffer.append(
+          analysis
+              .getWhere()
+              .replace(
+                  PinotSqlListener.FDATE_BEGIN_TIME, String.valueOf(beginTime - 8 * 3600 * 1000))
+              .replace(PinotSqlListener.FDATE_END_TIME, String.valueOf(endTime - 8 * 3600 * 1000)));
+    }
 
     buffer.append(Symbols.SPACE);
     buffer.append("GROUP BY");
@@ -269,7 +278,7 @@ public class PinotSqlAnalyzerTester {
         new TimeBucketDataTable(
             analysis.getTimeBucketName(),
             analysis.getGroupKeyNames(),
-            analysis.getOutputColumnNames());
+            analysis.getAggregateFunctions());
 
     for (Future<TimeBucketDataTable> future : futures) {
       table.merge(future.get());
