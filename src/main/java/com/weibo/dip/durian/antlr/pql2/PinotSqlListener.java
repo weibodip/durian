@@ -435,14 +435,14 @@ public class PinotSqlListener extends PQL2BaseListener {
 
   @Override
   public void enterOrderBy(PQL2Parser.OrderByContext ctx) {
-    inContext(ClauseContext.HAVING);
+    inContext(ClauseContext.ORDERBY);
   }
 
   @Override
   public void exitOrderBy(PQL2Parser.OrderByContext ctx) {
     setText(ctx, getText(ctx.orderByClause()));
 
-    upContext(ClauseContext.HAVING);
+    upContext(ClauseContext.ORDERBY);
   }
 
   @Override
@@ -876,15 +876,27 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void exitOrderByExpression(PQL2Parser.OrderByExpressionContext ctx) {
+    PQL2Parser.ExpressionContext expressionCtx = ctx.expression();
+    String expressionText = getText(expressionCtx);
+
     StringBuilder buffer = new StringBuilder();
 
-    buffer.append(getText(ctx.expression()));
+    buffer.append(expressionText);
     if (ctx.ordering() != null) {
       buffer.append(Symbols.SPACE);
       buffer.append(getText(ctx.ordering()));
     }
 
-    setText(ctx, buffer.toString());
+    String orderByExpressionText = buffer.toString();
+
+    if (isContext(ClauseContext.ORDERBY)) {
+      if (!(expressionCtx instanceof PQL2Parser.IdentifierContext
+          && analysis.getOutputColumnNames().contains(orderByExpressionText))) {
+        throw new RuntimeException(expressionText + " expression must be a alias");
+      }
+    }
+
+    setText(ctx, orderByExpressionText);
   }
 
   /*
