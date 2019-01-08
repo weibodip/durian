@@ -770,7 +770,7 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void exitBooleanOperator(PQL2Parser.BooleanOperatorContext ctx) {
-    setText(ctx, ctx.getText());
+    setText(ctx, ctx.getText().toUpperCase());
   }
 
   /*
@@ -882,16 +882,18 @@ public class PinotSqlListener extends PQL2BaseListener {
     StringBuilder buffer = new StringBuilder();
 
     buffer.append(expressionText);
+    buffer.append(Symbols.SPACE);
     if (ctx.ordering() != null) {
-      buffer.append(Symbols.SPACE);
       buffer.append(getText(ctx.ordering()));
+    } else {
+      buffer.append("ASC");
     }
 
     String orderByExpressionText = buffer.toString();
 
     if (isContext(ClauseContext.ORDERBY)) {
       if (!(expressionCtx instanceof PQL2Parser.IdentifierContext
-          && analysis.getOutputColumnNames().contains(orderByExpressionText))) {
+          && analysis.getOutputColumnNames().contains(expressionText))) {
         throw new RuntimeException(expressionText + " expression must be a alias");
       }
     }
@@ -904,7 +906,7 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void exitOrdering(PQL2Parser.OrderingContext ctx) {
-    setText(ctx, ctx.getText());
+    setText(ctx, ctx.getText().toUpperCase());
   }
 
   /*
