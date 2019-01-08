@@ -11,77 +11,50 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface PredicateVisitor<T> extends ParseTreeVisitor<T> {
   /**
-   * Visit a parse tree produced by {@link PredicateParser#root}.
-   *
-   * @param ctx the parse tree
-   * @return the visitor result
-   */
-  T visitRoot(PredicateParser.RootContext ctx);
-  /**
-   * Visit a parse tree produced by {@link PredicateParser#statement}.
+   * Visit a parse tree produced by the {@code Statement} labeled alternative in {@link
+   * PredicateParser#stat}.
    *
    * @param ctx the parse tree
    * @return the visitor result
    */
   T visitStatement(PredicateParser.StatementContext ctx);
   /**
-   * Visit a parse tree produced by {@link PredicateParser#predicateList}.
-   *
-   * @param ctx the parse tree
-   * @return the visitor result
-   */
-  T visitPredicateList(PredicateParser.PredicateListContext ctx);
-  /**
-   * Visit a parse tree produced by the {@code PredicateParenthesisGroup} labeled alternative in
-   * {@link PredicateParser#predicate}.
-   *
-   * @param ctx the parse tree
-   * @return the visitor result
-   */
-  T visitPredicateParenthesisGroup(PredicateParser.PredicateParenthesisGroupContext ctx);
-  /**
-   * Visit a parse tree produced by the {@code ComparisonPredicate} labeled alternative in {@link
+   * Visit a parse tree produced by the {@code Or} labeled alternative in {@link
    * PredicateParser#predicate}.
    *
    * @param ctx the parse tree
    * @return the visitor result
    */
-  T visitComparisonPredicate(PredicateParser.ComparisonPredicateContext ctx);
+  T visitOr(PredicateParser.OrContext ctx);
   /**
-   * Visit a parse tree produced by {@link PredicateParser#booleanOperator}.
+   * Visit a parse tree produced by the {@code Comparison} labeled alternative in {@link
+   * PredicateParser#predicate}.
    *
    * @param ctx the parse tree
    * @return the visitor result
    */
-  T visitBooleanOperator(PredicateParser.BooleanOperatorContext ctx);
+  T visitComparison(PredicateParser.ComparisonContext ctx);
   /**
-   * Visit a parse tree produced by {@link PredicateParser#comparisonClause}.
+   * Visit a parse tree produced by the {@code Parens} labeled alternative in {@link
+   * PredicateParser#predicate}.
    *
    * @param ctx the parse tree
    * @return the visitor result
    */
-  T visitComparisonClause(PredicateParser.ComparisonClauseContext ctx);
+  T visitParens(PredicateParser.ParensContext ctx);
   /**
-   * Visit a parse tree produced by the {@code IntegerLiteral} labeled alternative in {@link
-   * PredicateParser#literal}.
+   * Visit a parse tree produced by the {@code And} labeled alternative in {@link
+   * PredicateParser#predicate}.
    *
    * @param ctx the parse tree
    * @return the visitor result
    */
-  T visitIntegerLiteral(PredicateParser.IntegerLiteralContext ctx);
+  T visitAnd(PredicateParser.AndContext ctx);
   /**
-   * Visit a parse tree produced by the {@code FloatingPointLiteral} labeled alternative in {@link
-   * PredicateParser#literal}.
+   * Visit a parse tree produced by {@link PredicateParser#number}.
    *
    * @param ctx the parse tree
    * @return the visitor result
    */
-  T visitFloatingPointLiteral(PredicateParser.FloatingPointLiteralContext ctx);
-  /**
-   * Visit a parse tree produced by {@link PredicateParser#comparisonOperator}.
-   *
-   * @param ctx the parse tree
-   * @return the visitor result
-   */
-  T visitComparisonOperator(PredicateParser.ComparisonOperatorContext ctx);
+  T visitNumber(PredicateParser.NumberContext ctx);
 }

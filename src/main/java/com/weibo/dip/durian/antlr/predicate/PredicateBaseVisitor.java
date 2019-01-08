@@ -18,16 +18,6 @@ public class PredicateBaseVisitor<T> extends AbstractParseTreeVisitor<T>
    * ctx}.
    */
   @Override
-  public T visitRoot(PredicateParser.RootContext ctx) {
-    return visitChildren(ctx);
-  }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling {@link #visitChildren} on {@code
-   * ctx}.
-   */
-  @Override
   public T visitStatement(PredicateParser.StatementContext ctx) {
     return visitChildren(ctx);
   }
@@ -38,7 +28,7 @@ public class PredicateBaseVisitor<T> extends AbstractParseTreeVisitor<T>
    * ctx}.
    */
   @Override
-  public T visitPredicateList(PredicateParser.PredicateListContext ctx) {
+  public T visitOr(PredicateParser.OrContext ctx) {
     return visitChildren(ctx);
   }
   /**
@@ -48,7 +38,7 @@ public class PredicateBaseVisitor<T> extends AbstractParseTreeVisitor<T>
    * ctx}.
    */
   @Override
-  public T visitPredicateParenthesisGroup(PredicateParser.PredicateParenthesisGroupContext ctx) {
+  public T visitComparison(PredicateParser.ComparisonContext ctx) {
     return visitChildren(ctx);
   }
   /**
@@ -58,7 +48,7 @@ public class PredicateBaseVisitor<T> extends AbstractParseTreeVisitor<T>
    * ctx}.
    */
   @Override
-  public T visitComparisonPredicate(PredicateParser.ComparisonPredicateContext ctx) {
+  public T visitParens(PredicateParser.ParensContext ctx) {
     return visitChildren(ctx);
   }
   /**
@@ -68,7 +58,7 @@ public class PredicateBaseVisitor<T> extends AbstractParseTreeVisitor<T>
    * ctx}.
    */
   @Override
-  public T visitBooleanOperator(PredicateParser.BooleanOperatorContext ctx) {
+  public T visitAnd(PredicateParser.AndContext ctx) {
     return visitChildren(ctx);
   }
   /**
@@ -78,37 +68,7 @@ public class PredicateBaseVisitor<T> extends AbstractParseTreeVisitor<T>
    * ctx}.
    */
   @Override
-  public T visitComparisonClause(PredicateParser.ComparisonClauseContext ctx) {
-    return visitChildren(ctx);
-  }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling {@link #visitChildren} on {@code
-   * ctx}.
-   */
-  @Override
-  public T visitIntegerLiteral(PredicateParser.IntegerLiteralContext ctx) {
-    return visitChildren(ctx);
-  }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling {@link #visitChildren} on {@code
-   * ctx}.
-   */
-  @Override
-  public T visitFloatingPointLiteral(PredicateParser.FloatingPointLiteralContext ctx) {
-    return visitChildren(ctx);
-  }
-  /**
-   * {@inheritDoc}
-   *
-   * <p>The default implementation returns the result of calling {@link #visitChildren} on {@code
-   * ctx}.
-   */
-  @Override
-  public T visitComparisonOperator(PredicateParser.ComparisonOperatorContext ctx) {
+  public T visitNumber(PredicateParser.NumberContext ctx) {
     return visitChildren(ctx);
   }
 }
