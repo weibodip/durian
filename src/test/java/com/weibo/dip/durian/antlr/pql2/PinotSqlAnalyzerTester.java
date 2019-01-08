@@ -286,6 +286,22 @@ public class PinotSqlAnalyzerTester {
 
     executors.shutdown();
 
+    for (String outputColumnExpression : outputColumnExpressions) {
+      if (table.containColumn(outputColumnExpression)) {
+        continue;
+      }
+
+      LOGGER.info("outputColumnExpression {} not contain", outputColumnExpression);
+
+      table.computeColumn(outputColumnExpression);
+    }
+
+    table.replaceColumns(outputColumnExpressions, outputColumnNames);
+
+    table.print();
+
+    table.truncateColumns(outputColumnNames);
+
     table.print();
 
     stopwatch.stop();

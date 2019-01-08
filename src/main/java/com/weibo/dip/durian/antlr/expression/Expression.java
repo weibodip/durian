@@ -1,5 +1,6 @@
 package com.weibo.dip.durian.antlr.expression;
 
+import com.weibo.dip.durian.antlr.CaseChangingCharStream;
 import com.weibo.dip.durian.antlr.SyntaxErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -10,7 +11,9 @@ public class Expression {
   public String[] eval(String expression) throws RuntimeException {
     CharStream input = CharStreams.fromString(expression);
 
-    ExpressionLexer lexer = new ExpressionLexer(input);
+    CaseChangingCharStream upper = new CaseChangingCharStream(input, false);
+
+    ExpressionLexer lexer = new ExpressionLexer(upper);
 
     CommonTokenStream tokens = new CommonTokenStream(lexer);
 
