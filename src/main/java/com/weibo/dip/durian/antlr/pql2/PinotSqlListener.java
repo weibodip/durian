@@ -422,13 +422,27 @@ public class PinotSqlListener extends PQL2BaseListener {
   }
 
   @Override
+  public void enterHaving(PQL2Parser.HavingContext ctx) {
+    inContext(ClauseContext.HAVING);
+  }
+
+  @Override
   public void exitHaving(PQL2Parser.HavingContext ctx) {
     setText(ctx, getText(ctx.havingClause()));
+
+    upContext(ClauseContext.HAVING);
+  }
+
+  @Override
+  public void enterOrderBy(PQL2Parser.OrderByContext ctx) {
+    inContext(ClauseContext.HAVING);
   }
 
   @Override
   public void exitOrderBy(PQL2Parser.OrderByContext ctx) {
     setText(ctx, getText(ctx.orderByClause()));
+
+    upContext(ClauseContext.HAVING);
   }
 
   @Override
@@ -540,6 +554,16 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void exitPredicateList(PQL2Parser.PredicateListContext ctx) {
+    if (isContext(ClauseContext.HAVING)) {
+      for (int index = 0; index < ctx.predicate().size(); index++) {
+        PQL2Parser.PredicateContext predicateContext = ctx.predicate(index);
+
+        if (!(predicateContext instanceof PQL2Parser.ComparisonPredicateContext)) {
+          throw new RuntimeException(getText(predicateContext) + " must be a comparison clause");
+        }
+      }
+    }
+
     List<String> buffer = new ArrayList<>();
 
     buffer.add(getText(ctx.predicate(0)));
@@ -649,15 +673,41 @@ public class PinotSqlListener extends PQL2BaseListener {
   */
   @Override
   public void exitComparisonClause(PQL2Parser.ComparisonClauseContext ctx) {
+    PQL2Parser.ExpressionContext leftExprCtx = ctx.expression(0);
+    PQL2Parser.ComparisonOperatorContext operatorContext = ctx.comparisonOperator();
+    PQL2Parser.ExpressionContext rightExprCtx = ctx.expression(1);
+
+    String leftExpr = getText(leftExprCtx);
+    String operator = getText(operatorContext);
+    String rightExpr = getText(rightExprCtx);
+
     StringBuilder buffer = new StringBuilder();
 
-    buffer.append(getText(ctx.expression(0)));
+    buffer.append(leftExpr);
     buffer.append(Symbols.SPACE);
-    buffer.append(getText(ctx.comparisonOperator()));
+    buffer.append(operator);
     buffer.append(Symbols.SPACE);
-    buffer.append(getText(ctx.expression(1)));
+    buffer.append(rightExpr);
 
-    setText(ctx, buffer.toString());
+    String comparisonClauseText = buffer.toString();
+
+    setText(ctx, comparisonClauseText);
+
+    if (isContext(ClauseContext.HAVING)) {
+      if (!(leftExprCtx instanceof PQL2Parser.IdentifierContext
+          && analysis.getOutputColumnNames().contains(leftExpr))) {
+        throw new RuntimeException(comparisonClauseText + " left expression must be a alias");
+      }
+
+      if (!(rightExprCtx instanceof PQL2Parser.ConstantContext
+          && (((PQL2Parser.ConstantContext) rightExprCtx).literal()
+                  instanceof PQL2Parser.IntegerLiteralContext
+              || ((PQL2Parser.ConstantContext) rightExprCtx).literal()
+                  instanceof PQL2Parser.FloatingPointLiteralContext))) {
+        throw new RuntimeException(
+            comparisonClauseText + " right expression must be a int or float");
+      }
+    }
   }
 
   /*
