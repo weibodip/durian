@@ -1,5 +1,6 @@
 package com.weibo.dip.durian.antlr.pql2;
 
+import com.weibo.dip.durian.KeyValue;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +30,7 @@ public class Analysis {
   private String timeBucketName = "timeBucket";
   private List<String> groupKeyNames = new ArrayList<>();
   private List<String> havingKeyNames = new ArrayList<>();
+  private List<KeyValue<String, Boolean>> sorts = new ArrayList<>();
 
   public String getSql() {
     return sql;
@@ -200,5 +202,9 @@ public class Analysis {
 
   public void addHavingKeyName(String name) {
     havingKeyNames.add(name);
+  }
+
+  public void addSort(KeyValue<String, Boolean> sort) {
+    sorts.add(sort);
   }
 }

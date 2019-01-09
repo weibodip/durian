@@ -1,5 +1,6 @@
 package com.weibo.dip.durian.antlr.pql2;
 
+import com.weibo.dip.durian.KeyValue;
 import com.weibo.dip.durian.Symbols;
 import com.weibo.dip.durian.util.DatetimeUtil;
 import java.text.ParseException;
@@ -18,6 +19,9 @@ import org.slf4j.LoggerFactory;
 
 public class PinotSqlListener extends PQL2BaseListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(PinotSqlListener.class);
+
+  private static final String DESC = "DESC";
+  private static final String ASC = "ASC";
 
   private Analysis analysis = new Analysis();
 
@@ -883,16 +887,28 @@ public class PinotSqlListener extends PQL2BaseListener {
   public void exitOrderByExpression(PQL2Parser.OrderByExpressionContext ctx) {
     PQL2Parser.ExpressionContext expressionCtx = ctx.expression();
     String expressionText = getText(expressionCtx);
+    String orderingText = ASC;
+    if (ctx.ordering() != null) {
+      orderingText = getText(ctx.ordering());
+    }
+
+    KeyValue<String, Boolean> sort = new KeyValue<>();
+
+    sort.setKey(expressionText);
+
+    if (orderingText.equals(ASC)) {
+      sort.setValue(true);
+    } else {
+      sort.setValue(false);
+    }
+
+    analysis.addSort(sort);
 
     StringBuilder buffer = new StringBuilder();
 
     buffer.append(expressionText);
     buffer.append(Symbols.SPACE);
-    if (ctx.ordering() != null) {
-      buffer.append(getText(ctx.ordering()));
-    } else {
-      buffer.append("ASC");
-    }
+    buffer.append(orderingText);
 
     String orderByExpressionText = buffer.toString();
 
