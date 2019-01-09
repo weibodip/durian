@@ -2,11 +2,13 @@ package com.weibo.dip.durian.antlr.pql2;
 
 import com.weibo.dip.durian.antlr.calculator.Calculator;
 import com.weibo.dip.durian.antlr.expression.Expression;
+import com.weibo.dip.durian.antlr.predicate.PredicateCalculator;
 import com.weibo.dip.durian.table.ConsoleTable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
@@ -25,8 +27,8 @@ public class TimeBucketDataTable {
   public TimeBucketDataTable(
       String timeBucketName, List<String> groupNames, List<String> columnNames) {
     this.timeBucketName = timeBucketName;
-    this.groupNames = groupNames;
-    this.columnNames = columnNames;
+    this.groupNames = new ArrayList<>(groupNames);
+    this.columnNames = new ArrayList<>(columnNames);
   }
 
   public String getTimeBucketName() {
@@ -156,6 +158,38 @@ public class TimeBucketDataTable {
 
         for (int index : indices) {
           metrics.remove(index);
+        }
+      }
+    }
+  }
+
+  public void having(String having, List<String> havingKeyNames) {
+    PredicateCalculator predicateCalculator = new PredicateCalculator();
+
+    DecimalFormat decimalFormat = new DecimalFormat();
+
+    decimalFormat.setGroupingUsed(false);
+    decimalFormat.setMaximumFractionDigits(10);
+
+    for (Map.Entry<Long, Map<List<String>, List<Double>>> bucket : buckets.entrySet()) {
+      Map<List<String>, List<Double>> datas = bucket.getValue();
+
+      Iterator<Map.Entry<List<String>, List<Double>>> iter = datas.entrySet().iterator();
+
+      while (iter.hasNext()) {
+        List<Double> metrics = iter.next().getValue();
+
+        String havingTransformation = having;
+
+        for (String havingKeyName : havingKeyNames) {
+          havingTransformation =
+              havingTransformation.replace(
+                  havingKeyName,
+                  decimalFormat.format(metrics.get(columnNames.indexOf(havingKeyName))));
+        }
+
+        if (!predicateCalculator.eval(havingTransformation)) {
+          iter.remove();
         }
       }
     }

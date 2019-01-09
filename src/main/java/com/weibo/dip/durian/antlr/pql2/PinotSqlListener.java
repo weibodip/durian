@@ -561,6 +561,11 @@ public class PinotSqlListener extends PQL2BaseListener {
         if (!(predicateContext instanceof PQL2Parser.ComparisonPredicateContext)) {
           throw new RuntimeException(getText(predicateContext) + " must be a comparison clause");
         }
+
+        PQL2Parser.ComparisonClauseContext comparisonClauseCtx =
+            ((PQL2Parser.ComparisonPredicateContext) predicateContext).comparisonClause();
+
+        analysis.addHavingKeyName(getText(comparisonClauseCtx.expression(0)));
       }
     }
 

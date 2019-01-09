@@ -28,6 +28,7 @@ public class Analysis {
   private List<String> outputColumnNames = new ArrayList<>();
   private String timeBucketName = "timeBucket";
   private List<String> groupKeyNames = new ArrayList<>();
+  private List<String> havingKeyNames = new ArrayList<>();
 
   public String getSql() {
     return sql;
@@ -191,5 +192,13 @@ public class Analysis {
 
   public void addGroupKeyName(String name) {
     groupKeyNames.add(name);
+  }
+
+  public List<String> getHavingKeyNames() {
+    return havingKeyNames;
+  }
+
+  public void addHavingKeyName(String name) {
+    havingKeyNames.add(name);
   }
 }

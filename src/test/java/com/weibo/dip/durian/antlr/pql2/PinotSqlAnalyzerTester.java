@@ -70,11 +70,11 @@ public class PinotSqlAnalyzerTester {
       long value = start++ * granularity + point;
 
       if (value <= beginTime) {
-        timeRanges.add(beginTime);
+        timeRanges.add(value);
       } else if (value < endTime) {
         timeRanges.add(value);
       } else if (value >= endTime) {
-        timeRanges.add(endTime);
+        timeRanges.add(value);
 
         break;
       }
@@ -105,25 +105,16 @@ public class PinotSqlAnalyzerTester {
     buffer.append(Symbols.SPACE);
     buffer.append("WHERE");
     buffer.append(Symbols.SPACE);
-    if (!isPinot) {
-      buffer.append(
-          analysis
-              .getWhere()
-              .replace(PinotSqlListener.FDATE_BEGIN_TIME, String.valueOf(beginTime))
-              .replace(PinotSqlListener.FDATE_END_TIME, String.valueOf(endTime)));
-    } else {
-      buffer.append(
-          analysis
-              .getWhere()
-              .replace(
-                  PinotSqlListener.FDATE_BEGIN_TIME, String.valueOf(beginTime - 8 * 3600 * 1000))
-              .replace(PinotSqlListener.FDATE_END_TIME, String.valueOf(endTime - 8 * 3600 * 1000)));
-    }
+    buffer.append(
+        analysis
+            .getWhere()
+            .replace(PinotSqlListener.FDATE_BEGIN_TIME, String.valueOf(beginTime))
+            .replace(PinotSqlListener.FDATE_END_TIME, String.valueOf(endTime)));
 
     buffer.append(Symbols.SPACE);
     buffer.append("GROUP BY");
     buffer.append(Symbols.SPACE);
-    buffer.append(analysis.getGroupBy());
+    buffer.append(StringUtils.join(analysis.getGroupKeyNames(), Symbols.COMMA + Symbols.SPACE));
 
     if (analysis.hasHaving() && !isPinot) {
       buffer.append(Symbols.SPACE);
@@ -149,12 +140,12 @@ public class PinotSqlAnalyzerTester {
       buffer.append(String.valueOf(1000));
     }
 
-    if (analysis.hasLimit() && !isPinot) {
-      buffer.append(Symbols.SPACE);
-      buffer.append("LIMIT");
-      buffer.append(Symbols.SPACE);
-      buffer.append(analysis.getLimit());
-    }
+    //    if (analysis.hasLimit() && !isPinot) {
+    //      buffer.append(Symbols.SPACE);
+    //      buffer.append("LIMIT");
+    //      buffer.append(Symbols.SPACE);
+    //      buffer.append(analysis.getLimit());
+    //    }
 
     return buffer.toString();
   }
@@ -187,7 +178,7 @@ public class PinotSqlAnalyzerTester {
 
       ResultSetGroup resultSetGroup = CONNECTION.execute(pinotSql);
 
-      TimeBucketDataTable pinotSqlResultTable =
+      TimeBucketDataTable resultTable =
           new TimeBucketDataTable(
               analysis.getTimeBucketName(),
               analysis.getGroupKeyNames(),
@@ -197,26 +188,51 @@ public class PinotSqlAnalyzerTester {
         ResultSet resultSet = resultSetGroup.getResultSet(group);
 
         for (int row = 0; row < resultSet.getRowCount(); row++) {
-          long timeBucketValue = resultSet.getGroupKeyLong(row, 0);
+          long timeBucketValue = beginTime;
 
           List<String> groupValues = new ArrayList<>();
-          for (int groupKey = 1; groupKey < resultSet.getGroupKeyLength(); groupKey++) {
+          for (int groupKey = 0; groupKey < resultSet.getGroupKeyLength(); groupKey++) {
             groupValues.add(resultSet.getGroupKeyString(row, groupKey));
           }
 
           double columnValue = resultSet.getDouble(row, 0);
 
-          pinotSqlResultTable.addColumn(timeBucketValue, groupValues, columnValue);
+          resultTable.addColumn(timeBucketValue, groupValues, columnValue);
         }
       }
 
-      pinotSqlResultTable.print();
+      resultTable.print();
+
+      List<String> outputColumnExpressions = analysis.getOutputColumnExpressions();
+      List<String> outputColumnNames = analysis.getOutputColumnNames();
+
+      for (String outputColumnExpression : outputColumnExpressions) {
+        if (resultTable.containColumn(outputColumnExpression)) {
+          continue;
+        }
+
+        LOGGER.info("outputColumnExpression {} not contain", outputColumnExpression);
+
+        resultTable.computeColumn(outputColumnExpression);
+      }
+
+      resultTable.replaceColumns(outputColumnExpressions, outputColumnNames);
+
+      resultTable.print();
+
+      resultTable.truncateColumns(outputColumnNames);
+
+      resultTable.print();
+
+      resultTable.having(analysis.getHaving(), analysis.getHavingKeyNames());
+
+      resultTable.print();
 
       stopwatch.stop();
 
       LOGGER.info("pinot time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
-      return pinotSqlResultTable;
+      return resultTable;
     }
   }
 
@@ -258,6 +274,9 @@ public class PinotSqlAnalyzerTester {
     List<String> groupKeyNames = analysis.getGroupKeyNames();
     LOGGER.info("groupKeyNames: {}", groupKeyNames);
 
+    List<String> havingKeyNames = analysis.getHavingKeyNames();
+    LOGGER.info("havingKeyNames: {}", havingKeyNames);
+
     List<Long> timeRanges =
         getTimeRanges(beginTime, endTime, granularityTimeUnit, granularityTimeSize);
     LOGGER.info("timeRanges: {}", timeRanges);
@@ -278,29 +297,13 @@ public class PinotSqlAnalyzerTester {
         new TimeBucketDataTable(
             analysis.getTimeBucketName(),
             analysis.getGroupKeyNames(),
-            analysis.getAggregateFunctions());
+            analysis.getOutputColumnNames());
 
     for (Future<TimeBucketDataTable> future : futures) {
       table.merge(future.get());
     }
 
     executors.shutdown();
-
-    for (String outputColumnExpression : outputColumnExpressions) {
-      if (table.containColumn(outputColumnExpression)) {
-        continue;
-      }
-
-      LOGGER.info("outputColumnExpression {} not contain", outputColumnExpression);
-
-      table.computeColumn(outputColumnExpression);
-    }
-
-    table.replaceColumns(outputColumnExpressions, outputColumnNames);
-
-    table.print();
-
-    table.truncateColumns(outputColumnNames);
 
     table.print();
 
