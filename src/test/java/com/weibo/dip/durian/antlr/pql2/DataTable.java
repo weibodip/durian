@@ -1,5 +1,6 @@
 package com.weibo.dip.durian.antlr.pql2;
 
+import com.weibo.dip.durian.KeyValue;
 import com.weibo.dip.durian.antlr.calculator.Calculator;
 import com.weibo.dip.durian.antlr.expression.Expression;
 import com.weibo.dip.durian.antlr.predicate.PredicateCalculator;
@@ -215,6 +216,46 @@ public class DataTable {
     }
 
     rows.addAll(anotherTable.getRows());
+  }
+
+  public void sort(List<KeyValue<String, Boolean>> sorts) {
+    rows.sort(
+        (leftRow, rightRow) -> {
+          for (KeyValue<String, Boolean> sort : sorts) {
+            String metric = sort.getKey();
+            boolean isAsc = sort.getValue();
+
+            Comparable leftValue = (Comparable) leftRow.get(metric);
+            Comparable rigthValue = (Comparable) rightRow.get(metric);
+
+            @SuppressWarnings("unchecked")
+            int compare = leftValue.compareTo(rigthValue);
+
+            if (compare < 0) {
+              if (isAsc) {
+                return -1;
+              } else {
+                return 1;
+              }
+            } else if (compare > 0) {
+              if (isAsc) {
+                return 1;
+              } else {
+                return -1;
+              }
+            }
+          }
+
+          return 0;
+        });
+  }
+
+  public void top(int top) {
+    rows = rows.subList(0, top);
+  }
+
+  public List<DataRow> gets() {
+    return rows;
   }
 
   public void print() {

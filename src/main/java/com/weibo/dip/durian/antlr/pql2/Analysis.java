@@ -204,6 +204,10 @@ public class Analysis {
     havingKeyNames.add(name);
   }
 
+  public List<KeyValue<String, Boolean>> getSorts() {
+    return sorts;
+  }
+
   public void addSort(KeyValue<String, Boolean> sort) {
     sorts.add(sort);
   }

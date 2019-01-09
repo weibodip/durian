@@ -5,9 +5,11 @@ import com.linkedin.pinot.client.Connection;
 import com.linkedin.pinot.client.ConnectionFactory;
 import com.linkedin.pinot.client.ResultSet;
 import com.linkedin.pinot.client.ResultSetGroup;
+import com.weibo.dip.durian.KeyValue;
 import com.weibo.dip.durian.Symbols;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -225,8 +227,6 @@ public class PinotSqlAnalyzerTester {
         dataTable.addRow(dataRow);
       }
 
-      dataTable.print();
-
       List<String> outputColumnExpressions = analysis.getOutputColumnExpressions();
       List<String> outputColumnNames = analysis.getOutputColumnNames();
 
@@ -242,8 +242,6 @@ public class PinotSqlAnalyzerTester {
 
       dataTable.replaceColumns(outputColumnExpressions, outputColumnNames);
 
-      dataTable.print();
-
       List<String> truncateColumns = new ArrayList<>();
 
       truncateColumns.add(analysis.getTimeBucketName());
@@ -252,9 +250,11 @@ public class PinotSqlAnalyzerTester {
 
       dataTable.truncateColumns(truncateColumns);
 
-      dataTable.print();
-
       dataTable.having(analysis.getHaving(), analysis.getHavingKeyNames());
+
+      dataTable.sort(analysis.getSorts());
+
+      dataTable.top(Integer.valueOf(analysis.getTop()));
 
       dataTable.print();
 
@@ -334,6 +334,8 @@ public class PinotSqlAnalyzerTester {
     for (Future<DataTable> future : futures) {
       table.merge(future.get());
     }
+
+    table.sort(Collections.singletonList(new KeyValue<>(analysis.getTimeBucketName(), true)));
 
     executors.shutdown();
 
