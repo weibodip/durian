@@ -169,18 +169,25 @@ public class PinotSqlAnalyzerTester {
 
     @Override
     public DataTable call() {
+      Stopwatch callWatch = Stopwatch.createStarted();
+
       String splitSql = getSplitSql(analysis, beginTime, endTime, false);
       LOGGER.info("splitSql: {}", splitSql);
 
       /*
        TODO: cache
       */
-      Stopwatch stopwatch = Stopwatch.createStarted();
+      Stopwatch stepWatch = Stopwatch.createStarted();
 
       String pinotSql = getSplitSql(analysis, beginTime, endTime, true);
       LOGGER.info("pinotSql: {}", pinotSql);
 
       ResultSetGroup resultSetGroup = CONNECTION.execute(pinotSql);
+
+      stepWatch.stop();
+      LOGGER.info("pinot execute time: {} ms", stepWatch.elapsed(TimeUnit.MILLISECONDS));
+
+      stepWatch = Stopwatch.createStarted();
 
       List<String> names = new ArrayList<>();
 
@@ -235,7 +242,7 @@ public class PinotSqlAnalyzerTester {
           continue;
         }
 
-        LOGGER.info("outputColumnExpression {} not contain", outputColumnExpression);
+        LOGGER.debug("outputColumnExpression {} not contain", outputColumnExpression);
 
         dataTable.computeMetric(outputColumnExpression);
       }
@@ -258,9 +265,11 @@ public class PinotSqlAnalyzerTester {
 
       dataTable.print();
 
-      stopwatch.stop();
+      stepWatch.stop();
+      LOGGER.info("table parse time: {} ms", stepWatch.elapsed(TimeUnit.MILLISECONDS));
 
-      LOGGER.info("pinot time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+      callWatch.stop();
+      LOGGER.info("select call time: {} ms", callWatch.elapsed(TimeUnit.MILLISECONDS));
 
       return dataTable;
     }
@@ -311,7 +320,7 @@ public class PinotSqlAnalyzerTester {
         getTimeRanges(beginTime, endTime, granularityTimeUnit, granularityTimeSize);
     LOGGER.info("timeRanges: {}", timeRanges);
 
-    ExecutorService executors = Executors.newFixedThreadPool(1);
+    ExecutorService executors = Executors.newFixedThreadPool(5);
 
     List<Future<DataTable>> futures = new ArrayList<>();
 

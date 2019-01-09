@@ -114,7 +114,7 @@ public class DataTable {
   }
 
   public void computeMetric(String columnExpression) {
-    LOGGER.info("column expression: {}", columnExpression);
+    LOGGER.debug("column expression: {}", columnExpression);
 
     Expression expression = new Expression();
     Calculator calculator = new Calculator();
@@ -125,7 +125,7 @@ public class DataTable {
     decimalFormat.setMaximumFractionDigits(10);
 
     String[] operators = expression.eval(columnExpression);
-    LOGGER.info(
+    LOGGER.debug(
         "column expression operators({}): {}", operators.length, ArrayUtils.toString(operators));
 
     for (DataRow row : rows) {
@@ -151,11 +151,7 @@ public class DataTable {
       row.addMetric(columnExpression, value);
     }
 
-    System.out.println(names);
-
     names.add(columnExpression);
-
-    System.out.println(names);
   }
 
   public void truncateColumns(List<String> truncateNames) {
@@ -169,7 +165,7 @@ public class DataTable {
 
     Collections.reverse(indices);
 
-    LOGGER.info("truncate columns: {}", indices);
+    LOGGER.debug("truncate columns: {}", indices);
 
     for (int index : indices) {
       names.remove(index);
