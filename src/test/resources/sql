@@ -8,6 +8,6 @@ WHERE
 GROUP BY
   hours(24), cluster, topic
 
-HAVING min_foo >= 0 and max_foo < 10000000
+HAVING min_foo > 0 and max_foo < 10000000
 order by max_foo desc, min_foo
 TOP 10

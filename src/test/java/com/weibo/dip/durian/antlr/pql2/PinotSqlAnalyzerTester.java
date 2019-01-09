@@ -8,7 +8,9 @@ import com.linkedin.pinot.client.ResultSetGroup;
 import com.weibo.dip.durian.Symbols;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -150,7 +152,7 @@ public class PinotSqlAnalyzerTester {
     return buffer.toString();
   }
 
-  private static class Selector implements Callable<TimeBucketDataTable> {
+  private static class Selector implements Callable<DataTable> {
 
     private Analysis analysis;
 
@@ -164,7 +166,7 @@ public class PinotSqlAnalyzerTester {
     }
 
     @Override
-    public TimeBucketDataTable call() {
+    public DataTable call() {
       String splitSql = getSplitSql(analysis, beginTime, endTime, false);
       LOGGER.info("splitSql: {}", splitSql);
 
@@ -178,18 +180,20 @@ public class PinotSqlAnalyzerTester {
 
       ResultSetGroup resultSetGroup = CONNECTION.execute(pinotSql);
 
-      TimeBucketDataTable resultTable =
-          new TimeBucketDataTable(
-              analysis.getTimeBucketName(),
-              analysis.getGroupKeyNames(),
-              analysis.getAggregateFunctions());
+      List<String> names = new ArrayList<>();
+
+      names.add(analysis.getTimeBucketName());
+      names.addAll(analysis.getGroupKeyNames());
+      names.addAll(analysis.getAggregateFunctions());
+
+      DataTable dataTable = new DataTable(names);
+
+      Map<List<String>, List<Double>> groups = new HashMap<>();
 
       for (int group = 0; group < resultSetGroup.getResultSetCount(); group++) {
         ResultSet resultSet = resultSetGroup.getResultSet(group);
 
         for (int row = 0; row < resultSet.getRowCount(); row++) {
-          long timeBucketValue = beginTime;
-
           List<String> groupValues = new ArrayList<>();
           for (int groupKey = 0; groupKey < resultSet.getGroupKeyLength(); groupKey++) {
             groupValues.add(resultSet.getGroupKeyString(row, groupKey));
@@ -197,42 +201,68 @@ public class PinotSqlAnalyzerTester {
 
           double columnValue = resultSet.getDouble(row, 0);
 
-          resultTable.addColumn(timeBucketValue, groupValues, columnValue);
+          if (!groups.containsKey(groupValues)) {
+            groups.put(groupValues, new ArrayList<>());
+          }
+
+          groups.get(groupValues).add(columnValue);
         }
       }
 
-      resultTable.print();
+      for (Map.Entry<List<String>, List<Double>> entry : groups.entrySet()) {
+        long timestamp = beginTime;
+        List<String> dimentions = entry.getKey();
+        List<Double> metrics = entry.getValue();
+
+        List<Object> values = new ArrayList<>();
+
+        values.add(timestamp);
+        values.addAll(dimentions);
+        values.addAll(metrics);
+
+        DataRow dataRow = new DataRow(names, values);
+
+        dataTable.addRow(dataRow);
+      }
+
+      dataTable.print();
 
       List<String> outputColumnExpressions = analysis.getOutputColumnExpressions();
       List<String> outputColumnNames = analysis.getOutputColumnNames();
 
       for (String outputColumnExpression : outputColumnExpressions) {
-        if (resultTable.containColumn(outputColumnExpression)) {
+        if (dataTable.containMetric(outputColumnExpression)) {
           continue;
         }
 
         LOGGER.info("outputColumnExpression {} not contain", outputColumnExpression);
 
-        resultTable.computeColumn(outputColumnExpression);
+        dataTable.computeMetric(outputColumnExpression);
       }
 
-      resultTable.replaceColumns(outputColumnExpressions, outputColumnNames);
+      dataTable.replaceColumns(outputColumnExpressions, outputColumnNames);
 
-      resultTable.print();
+      dataTable.print();
 
-      resultTable.truncateColumns(outputColumnNames);
+      List<String> truncateColumns = new ArrayList<>();
 
-      resultTable.print();
+      truncateColumns.add(analysis.getTimeBucketName());
+      truncateColumns.addAll(analysis.getGroupKeyNames());
+      truncateColumns.addAll(outputColumnNames);
 
-      resultTable.having(analysis.getHaving(), analysis.getHavingKeyNames());
+      dataTable.truncateColumns(truncateColumns);
 
-      resultTable.print();
+      dataTable.print();
+
+      dataTable.having(analysis.getHaving(), analysis.getHavingKeyNames());
+
+      dataTable.print();
 
       stopwatch.stop();
 
       LOGGER.info("pinot time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
-      return resultTable;
+      return dataTable;
     }
   }
 
@@ -283,23 +313,25 @@ public class PinotSqlAnalyzerTester {
 
     ExecutorService executors = Executors.newFixedThreadPool(1);
 
-    List<Future<TimeBucketDataTable>> futures = new ArrayList<>();
+    List<Future<DataTable>> futures = new ArrayList<>();
 
     for (int index = 0; index < timeRanges.size() - 1; index++) {
-      Future<TimeBucketDataTable> future =
+      Future<DataTable> future =
           executors.submit(
               new Selector(analysis, timeRanges.get(index), timeRanges.get(index + 1) - 1));
 
       futures.add(future);
     }
 
-    TimeBucketDataTable table =
-        new TimeBucketDataTable(
-            analysis.getTimeBucketName(),
-            analysis.getGroupKeyNames(),
-            analysis.getOutputColumnNames());
+    List<String> names = new ArrayList<>();
 
-    for (Future<TimeBucketDataTable> future : futures) {
+    names.add(analysis.getTimeBucketName());
+    names.addAll(analysis.getGroupKeyNames());
+    names.addAll(analysis.getOutputColumnNames());
+
+    DataTable table = new DataTable(names);
+
+    for (Future<DataTable> future : futures) {
       table.merge(future.get());
     }
 
