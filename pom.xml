@@ -98,14 +98,6 @@
       <version>${antlr.version}</version>
       <scope>provided</scope>
     </dependency>
-
-    <!-- pinot -->
-    <dependency>
-      <groupId>com.linkedin.pinot</groupId>
-      <artifactId>pinot-api</artifactId>
-      <version>0.016</version>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
   <build>
