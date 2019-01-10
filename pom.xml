@@ -166,7 +166,7 @@
         </executions>
         <configuration>
           <excludes>
-            com/weibo/dip/durian/antlr/calculator/*,com/weibo/dip/durian/antlr/expression/*,com/weibo/dip/durian/antlr/sparksql/*,com/weibo/dip/durian/antlr/pql2/*
+            com/weibo/dip/durian/antlr/calculator/*,com/weibo/dip/durian/antlr/expression/*,com/weibo/dip/durian/antlr/sparksql/*,com/weibo/dip/durian/antlr/pql2/*,com/weibo/dip/durian/antlr/predicate/*
           </excludes>
         </configuration>
       </plugin>
