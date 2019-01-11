@@ -31,7 +31,7 @@ public class PredicateLexer extends Lexer {
       LT = 10,
       GT = 11,
       ELT = 12,
-      GLT = 13,
+      EGT = 13,
       EQ = 14,
       NEQ = 15;
   public static String[] channelNames = {"DEFAULT_TOKEN_CHANNEL", "HIDDEN"};
@@ -39,7 +39,7 @@ public class PredicateLexer extends Lexer {
   public static String[] modeNames = {"DEFAULT_MODE"};
 
   public static final String[] ruleNames = {
-    "T__0", "T__1", "T__2", "T__3", "T__4", "INT", "FLOAT", "DIGIT", "WS", "LT", "GT", "ELT", "GLT",
+    "T__0", "T__1", "T__2", "T__3", "T__4", "INT", "FLOAT", "DIGIT", "WS", "LT", "GT", "ELT", "EGT",
     "EQ", "NEQ"
   };
 
@@ -48,7 +48,7 @@ public class PredicateLexer extends Lexer {
     "'>='", "'='", "'!='"
   };
   private static final String[] _SYMBOLIC_NAMES = {
-    null, null, null, null, null, null, "INT", "FLOAT", "DIGIT", "WS", "LT", "GT", "ELT", "GLT",
+    null, null, null, null, null, null, "INT", "FLOAT", "DIGIT", "WS", "LT", "GT", "ELT", "EGT",
     "EQ", "NEQ"
   };
   public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
