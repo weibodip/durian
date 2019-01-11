@@ -32,26 +32,27 @@ public class PredicateParser extends Parser {
       T__1 = 2,
       T__2 = 3,
       T__3 = 4,
-      INT = 5,
-      FLOAT = 6,
-      DIGIT = 7,
-      WS = 8,
-      LT = 9,
-      GT = 10,
-      ELT = 11,
-      EGT = 12,
-      EQ = 13,
-      NEQ = 14;
+      T__4 = 5,
+      INT = 6,
+      FLOAT = 7,
+      DIGIT = 8,
+      WS = 9,
+      LT = 10,
+      GT = 11,
+      ELT = 12,
+      GLT = 13,
+      EQ = 14,
+      NEQ = 15;
   public static final int RULE_stat = 0, RULE_predicate = 1, RULE_number = 2;
   public static final String[] ruleNames = {"stat", "predicate", "number"};
 
   private static final String[] _LITERAL_NAMES = {
-    null, "'('", "')'", "'AND'", "'OR'", null, null, null, null, "'<'", "'>'", "'<='", "'>='",
-    "'='", "'!='"
+    null, "'('", "')'", "'AND'", "'OR'", "'NaN'", null, null, null, null, "'<'", "'>'", "'<='",
+    "'>='", "'='", "'!='"
   };
   private static final String[] _SYMBOLIC_NAMES = {
-    null, null, null, null, null, "INT", "FLOAT", "DIGIT", "WS", "LT", "GT", "ELT", "EGT", "EQ",
-    "NEQ"
+    null, null, null, null, null, null, "INT", "FLOAT", "DIGIT", "WS", "LT", "GT", "ELT", "GLT",
+    "EQ", "NEQ"
   };
   public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -294,6 +295,7 @@ public class PredicateParser extends Parser {
               match(T__1);
             }
             break;
+          case T__4:
           case INT:
           case FLOAT:
             {
@@ -310,7 +312,7 @@ public class PredicateParser extends Parser {
                           & ((1L << LT)
                               | (1L << GT)
                               | (1L << ELT)
-                              | (1L << EGT)
+                              | (1L << GLT)
                               | (1L << EQ)
                               | (1L << NEQ)))
                       != 0))) {
@@ -418,7 +420,8 @@ public class PredicateParser extends Parser {
       {
         setState(30);
         _la = _input.LA(1);
-        if (!(_la == INT || _la == FLOAT)) {
+        if (!((((_la) & ~0x3f) == 0
+            && ((1L << _la) & ((1L << T__4) | (1L << INT) | (1L << FLOAT))) != 0))) {
           _errHandler.recoverInline(this);
         } else {
           if (_input.LA(1) == Token.EOF) matchedEOF = true;
@@ -455,10 +458,10 @@ public class PredicateParser extends Parser {
   }
 
   public static final String _serializedATN =
-      "\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\20#\4\2\t\2\4\3\t"
+      "\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\21#\4\2\t\2\4\3\t"
           + "\3\4\4\t\4\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3\24\n\3\3\3"
           + "\3\3\3\3\3\3\3\3\3\3\7\3\34\n\3\f\3\16\3\37\13\3\3\4\3\4\3\4\2\3\4\5\2"
-          + "\4\6\2\4\3\2\13\20\3\2\7\b\2\"\2\b\3\2\2\2\4\23\3\2\2\2\6 \3\2\2\2\b\t"
+          + "\4\6\2\4\3\2\f\21\3\2\7\t\2\"\2\b\3\2\2\2\4\23\3\2\2\2\6 \3\2\2\2\b\t"
           + "\5\4\3\2\t\3\3\2\2\2\n\13\b\3\1\2\13\f\7\3\2\2\f\r\5\4\3\2\r\16\7\4\2"
           + "\2\16\24\3\2\2\2\17\20\5\6\4\2\20\21\t\2\2\2\21\22\5\6\4\2\22\24\3\2\2"
           + "\2\23\n\3\2\2\2\23\17\3\2\2\2\24\35\3\2\2\2\25\26\f\5\2\2\26\27\7\5\2"
