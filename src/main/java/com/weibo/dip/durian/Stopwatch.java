@@ -1,4 +1,4 @@
-package com.weibo.dip.durian.util;
+package com.weibo.dip.durian;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
