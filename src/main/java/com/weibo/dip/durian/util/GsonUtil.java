@@ -16,7 +16,11 @@ import java.util.Map;
 public final class GsonUtil {
 
   private static final Gson GSON =
-      new GsonBuilder().serializeNulls().disableHtmlEscaping().create();
+      new GsonBuilder()
+          .serializeNulls()
+          .serializeSpecialFloatingPointValues()
+          .disableHtmlEscaping()
+          .create();
 
   private static final JsonParser PARSER = new JsonParser();
 
