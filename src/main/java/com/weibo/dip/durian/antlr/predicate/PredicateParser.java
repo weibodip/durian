@@ -31,33 +31,56 @@ public class PredicateParser extends Parser {
   public static final int T__0 = 1,
       T__1 = 2,
       T__2 = 3,
-      AND = 4,
-      OR = 5,
-      INT = 6,
-      FLOAT = 7,
-      A = 8,
-      D = 9,
-      N = 10,
-      O = 11,
-      R = 12,
-      DIGIT = 13,
-      WS = 14,
-      LT = 15,
-      GT = 16,
-      ELT = 17,
-      EGT = 18,
-      EQ = 19,
-      NEQ = 20;
+      T__3 = 4,
+      T__4 = 5,
+      AND = 6,
+      OR = 7,
+      INT = 8,
+      FLOAT = 9,
+      A = 10,
+      D = 11,
+      N = 12,
+      O = 13,
+      R = 14,
+      DIGIT = 15,
+      WS = 16,
+      LT = 17,
+      GT = 18,
+      ELT = 19,
+      EGT = 20,
+      EQ = 21,
+      NEQ = 22;
   public static final int RULE_stat = 0, RULE_predicate = 1, RULE_number = 2;
   public static final String[] ruleNames = {"stat", "predicate", "number"};
 
   private static final String[] _LITERAL_NAMES = {
-    null, "'('", "')'", "'NaN'", null, null, null, null, null, null, null, null, null, null, null,
-    "'<'", "'>'", "'<='", "'>='", "'='", "'!='"
+    null,
+    "'('",
+    "')'",
+    "'NaN'",
+    "'Infinity'",
+    "'-Infinity'",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "'<'",
+    "'>'",
+    "'<='",
+    "'>='",
+    "'='",
+    "'!='"
   };
   private static final String[] _SYMBOLIC_NAMES = {
-    null, null, null, null, "AND", "OR", "INT", "FLOAT", "A", "D", "N", "O", "R", "DIGIT", "WS",
-    "LT", "GT", "ELT", "EGT", "EQ", "NEQ"
+    null, null, null, null, null, null, "AND", "OR", "INT", "FLOAT", "A", "D", "N", "O", "R",
+    "DIGIT", "WS", "LT", "GT", "ELT", "EGT", "EQ", "NEQ"
   };
   public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -309,6 +332,8 @@ public class PredicateParser extends Parser {
             }
             break;
           case T__2:
+          case T__3:
+          case T__4:
           case INT:
           case FLOAT:
             {
@@ -434,7 +459,9 @@ public class PredicateParser extends Parser {
         setState(30);
         _la = _input.LA(1);
         if (!((((_la) & ~0x3f) == 0
-            && ((1L << _la) & ((1L << T__2) | (1L << INT) | (1L << FLOAT))) != 0))) {
+            && ((1L << _la)
+                    & ((1L << T__2) | (1L << T__3) | (1L << T__4) | (1L << INT) | (1L << FLOAT)))
+                != 0))) {
           _errHandler.recoverInline(this);
         } else {
           if (_input.LA(1) == Token.EOF) matchedEOF = true;
@@ -471,16 +498,16 @@ public class PredicateParser extends Parser {
   }
 
   public static final String _serializedATN =
-      "\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\26#\4\2\t\2\4\3\t"
+      "\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\30#\4\2\t\2\4\3\t"
           + "\3\4\4\t\4\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3\24\n\3\3\3"
           + "\3\3\3\3\3\3\3\3\3\3\7\3\34\n\3\f\3\16\3\37\13\3\3\4\3\4\3\4\2\3\4\5\2"
-          + "\4\6\2\4\3\2\21\26\4\2\5\5\b\t\2\"\2\b\3\2\2\2\4\23\3\2\2\2\6 \3\2\2\2"
-          + "\b\t\5\4\3\2\t\3\3\2\2\2\n\13\b\3\1\2\13\f\7\3\2\2\f\r\5\4\3\2\r\16\7"
-          + "\4\2\2\16\24\3\2\2\2\17\20\5\6\4\2\20\21\t\2\2\2\21\22\5\6\4\2\22\24\3"
-          + "\2\2\2\23\n\3\2\2\2\23\17\3\2\2\2\24\35\3\2\2\2\25\26\f\5\2\2\26\27\7"
-          + "\6\2\2\27\34\5\4\3\6\30\31\f\4\2\2\31\32\7\7\2\2\32\34\5\4\3\5\33\25\3"
-          + "\2\2\2\33\30\3\2\2\2\34\37\3\2\2\2\35\33\3\2\2\2\35\36\3\2\2\2\36\5\3"
-          + "\2\2\2\37\35\3\2\2\2 !\t\3\2\2!\7\3\2\2\2\5\23\33\35";
+          + "\4\6\2\4\3\2\23\30\4\2\5\7\n\13\2\"\2\b\3\2\2\2\4\23\3\2\2\2\6 \3\2\2"
+          + "\2\b\t\5\4\3\2\t\3\3\2\2\2\n\13\b\3\1\2\13\f\7\3\2\2\f\r\5\4\3\2\r\16"
+          + "\7\4\2\2\16\24\3\2\2\2\17\20\5\6\4\2\20\21\t\2\2\2\21\22\5\6\4\2\22\24"
+          + "\3\2\2\2\23\n\3\2\2\2\23\17\3\2\2\2\24\35\3\2\2\2\25\26\f\5\2\2\26\27"
+          + "\7\b\2\2\27\34\5\4\3\6\30\31\f\4\2\2\31\32\7\t\2\2\32\34\5\4\3\5\33\25"
+          + "\3\2\2\2\33\30\3\2\2\2\34\37\3\2\2\2\35\33\3\2\2\2\35\36\3\2\2\2\36\5"
+          + "\3\2\2\2\37\35\3\2\2\2 !\t\3\2\2!\7\3\2\2\2\5\23\33\35";
   public static final ATN _ATN = new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 
   static {
