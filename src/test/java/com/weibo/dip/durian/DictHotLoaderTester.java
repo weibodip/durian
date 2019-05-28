@@ -9,7 +9,7 @@ public class DictHotLoaderTester {
     }
 
     @Override
-    void load() {
+    public void load() {
       dict.put("time", System.currentTimeMillis());
     }
   }
