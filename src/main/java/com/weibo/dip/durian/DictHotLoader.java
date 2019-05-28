@@ -26,44 +26,59 @@ public abstract class DictHotLoader<V> {
   private Lock readLock = lock.readLock();
   private Lock writeLock = lock.writeLock();
 
+  private long interval;
+
   public DictHotLoader() {
     this(DEFAULT_INTERVAL);
   }
 
+  /**
+   * Construct instance with interval.
+   *
+   * @param interval interval(millis)
+   */
   public DictHotLoader(long interval) {
     load();
 
-    Thread timer =
-        new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                while (true) {
-                  try {
-                    Thread.sleep(interval);
-                  } catch (InterruptedException e) {
-                    break;
-                  }
+    this.interval = interval;
 
-                  writeLock.lock();
+    Loader loader = new Loader();
 
-                  try {
-                    load();
-                  } catch (Exception e) {
-                    LOGGER.error("hot load error: {}", ExceptionUtils.getFullStackTrace(e));
-                  } finally {
-                    writeLock.unlock();
-                  }
-                }
-              }
-            });
+    loader.setDaemon(true);
+    loader.start();
+  }
 
-    timer.setDaemon(true);
-    timer.start();
+  private class Loader extends Thread {
+    @Override
+    public void run() {
+      while (true) {
+        try {
+          Thread.sleep(interval);
+        } catch (InterruptedException e) {
+          break;
+        }
+
+        writeLock.lock();
+
+        try {
+          load();
+        } catch (Exception e) {
+          LOGGER.error("hot load error: {}", ExceptionUtils.getFullStackTrace(e));
+        } finally {
+          writeLock.unlock();
+        }
+      }
+    }
   }
 
   abstract void load();
 
+  /**
+   * Get value by key.
+   *
+   * @param key key
+   * @return value
+   */
   public V get(String key) {
     readLock.lock();
 
