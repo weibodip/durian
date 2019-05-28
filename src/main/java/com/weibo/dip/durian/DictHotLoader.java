@@ -71,7 +71,7 @@ public abstract class DictHotLoader<V> {
     }
   }
 
-  abstract void load();
+  public abstract void load();
 
   /**
    * Get value by key.
