@@ -1,7 +1,10 @@
 package com.weibo.dip.durian;
 
+import java.io.Closeable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -14,7 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author yurun
  */
-public abstract class DictHotLoader<V> {
+public abstract class DictHotLoader<V> implements Closeable {
   private static final Logger LOGGER = LoggerFactory.getLogger(DictHotLoader.class);
 
   private static final long DEFAULT_INTERVAL = 3600 * 1000;
@@ -26,9 +29,9 @@ public abstract class DictHotLoader<V> {
   private Lock readLock = lock.readLock();
   private Lock writeLock = lock.writeLock();
 
-  private long interval;
+  private Timer timer = new Timer();
 
-  public DictHotLoader() {
+  public DictHotLoader() throws Exception {
     this(DEFAULT_INTERVAL);
   }
 
@@ -37,41 +40,29 @@ public abstract class DictHotLoader<V> {
    *
    * @param interval interval(millis)
    */
-  public DictHotLoader(long interval) {
+  public DictHotLoader(long interval) throws Exception {
     load();
 
-    this.interval = interval;
+    timer.scheduleAtFixedRate(
+        new TimerTask() {
+          @Override
+          public void run() {
+            writeLock.lock();
 
-    Loader loader = new Loader();
-
-    loader.setDaemon(true);
-    loader.start();
+            try {
+              load();
+            } catch (Exception e) {
+              LOGGER.info("timer task load error: {}", ExceptionUtils.getFullStackTrace(e));
+            } finally {
+              writeLock.unlock();
+            }
+          }
+        },
+        interval,
+        interval);
   }
 
-  private class Loader extends Thread {
-    @Override
-    public void run() {
-      while (true) {
-        try {
-          Thread.sleep(interval);
-        } catch (InterruptedException e) {
-          break;
-        }
-
-        writeLock.lock();
-
-        try {
-          load();
-        } catch (Exception e) {
-          LOGGER.error("hot load error: {}", ExceptionUtils.getFullStackTrace(e));
-        } finally {
-          writeLock.unlock();
-        }
-      }
-    }
-  }
-
-  public abstract void load();
+  public abstract void load() throws Exception;
 
   /**
    * Get value by key.
@@ -87,5 +78,10 @@ public abstract class DictHotLoader<V> {
     } finally {
       readLock.unlock();
     }
+  }
+
+  @Override
+  public void close() {
+    timer.cancel();
   }
 }
