@@ -33,4 +33,6 @@ public class Symbols {
   public static final String LEFT_PARENTHESIS = "(";
 
   public static final String RIGHT_PARENTHESIS = ")";
+
+  public static final String LINE_THROUGH = "-";
 }
