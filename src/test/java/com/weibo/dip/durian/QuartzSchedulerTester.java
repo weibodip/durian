@@ -32,7 +32,7 @@ public class QuartzSchedulerTester {
 
   public static void main(String[] args) throws Exception {
     QuartzScheduler scheduler = new QuartzScheduler();
-    scheduler.setThreadCount(2);
+    scheduler.setThreadCount(10);
     scheduler.start();
 
     String name = "test";
