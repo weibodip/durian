@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.weibo.dip.durian.util.DatetimeUtil;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -31,24 +30,13 @@ import org.slf4j.LoggerFactory;
 public class QuartzScheduler {
   private static final Logger LOGGER = LoggerFactory.getLogger(QuartzScheduler.class);
 
-  private Properties properties;
-
-  private StdSchedulerFactory factory;
-
   private Scheduler scheduler;
 
-  public QuartzScheduler() {
-    properties = new Properties();
-  }
-
-  public void setThreadCount(int threads) {
-    properties.setProperty("org.quartz.threadPool.threadCount", String.valueOf(threads));
+  public QuartzScheduler() throws SchedulerException {
+    scheduler = StdSchedulerFactory.getDefaultScheduler();
   }
 
   public void start() throws SchedulerException {
-    factory = new StdSchedulerFactory(properties);
-
-    scheduler = factory.getScheduler();
     scheduler.start();
   }
 
