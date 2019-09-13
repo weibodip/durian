@@ -235,6 +235,7 @@ public class HiveServer2Client implements Closeable {
       }
     }
 
+    assert Objects.nonNull(this.conn);
     this.stmt = this.conn.createStatement();
   }
 
@@ -1037,8 +1038,7 @@ public class HiveServer2Client implements Closeable {
       columns.stream()
           .filter(column -> column.getName().equals(colName))
           .findFirst()
-          .get()
-          .setPartitioned(true);
+          .ifPresent(column -> column.setPartitioned(true));
 
       index++;
     }
