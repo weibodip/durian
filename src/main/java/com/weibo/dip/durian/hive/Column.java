@@ -1,10 +1,14 @@
 package com.weibo.dip.durian.hive;
 
+import java.io.Serializable;
+import java.util.StringJoiner;
+
 /** Hive table column. */
-public class Column {
+public class Column implements Serializable {
   private String name;
   private String type;
   private String comment;
+  private boolean partitioned;
 
   public Column() {}
 
@@ -19,6 +23,22 @@ public class Column {
     this.name = name;
     this.type = type;
     this.comment = comment;
+    this.partitioned = false;
+  }
+
+  /**
+   * Construct a instance.
+   *
+   * @param name column name
+   * @param type column type
+   * @param comment column comment
+   * @param partitioned column is partitioned
+   */
+  public Column(String name, String type, String comment, boolean partitioned) {
+    this.name = name;
+    this.type = type;
+    this.comment = comment;
+    this.partitioned = partitioned;
   }
 
   public String getName() {
@@ -43,6 +63,14 @@ public class Column {
 
   public void setComment(String comment) {
     this.comment = comment;
+  }
+
+  public boolean isPartitioned() {
+    return partitioned;
+  }
+
+  public void setPartitioned(boolean partitioned) {
+    this.partitioned = partitioned;
   }
 
   @Override
@@ -71,6 +99,11 @@ public class Column {
 
   @Override
   public String toString() {
-    return String.format("name: %s, type: %s, comment: %s", name, type, comment);
+    return new StringJoiner(", ", Column.class.getSimpleName() + "[", "]")
+        .add("name='" + name + "'")
+        .add("type='" + type + "'")
+        .add("comment='" + comment + "'")
+        .add("partitioned=" + partitioned)
+        .toString();
   }
 }

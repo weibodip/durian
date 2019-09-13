@@ -1014,16 +1014,33 @@ public class HiveServer2Client implements Closeable {
 
     List<Column> columns = new ArrayList<>(rows.size());
 
-    for (List<Object> row : rows) {
-      String colName = (String) row.get(0);
-      if (StringUtils.isEmpty(colName)) {
-        break;
-      }
+    int index = 0;
 
+    while (index < rows.size()) {
+      List<Object> row = rows.get(index);
+
+      String colName = (String) row.get(0);
       String dataType = (String) row.get(1);
       String comment = (String) row.get(2);
 
+      if (StringUtils.isEmpty(colName) && Objects.isNull(dataType) && Objects.isNull(comment)) {
+        break;
+      }
+
       columns.add(new Column(colName, dataType, comment));
+      index++;
+    }
+
+    index += 4;
+    while (index < rows.size()) {
+      String colName = (String) rows.get(index).get(0);
+      columns.stream()
+          .filter(column -> column.getName().equals(colName))
+          .findFirst()
+          .get()
+          .setPartitioned(true);
+
+      index++;
     }
 
     return columns;
