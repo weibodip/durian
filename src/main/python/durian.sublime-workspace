@@ -1,0 +1,636 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"pr",
+				"print\tkeyword"
+			],
+			[
+				"tr",
+				"train\tstatement"
+			],
+			[
+				"deletekan",
+				"deleteKanbanButtonClick"
+			],
+			[
+				"refre",
+				"refresh"
+			],
+			[
+				"chart",
+				"charttype"
+			],
+			[
+				"char",
+				"chart"
+			],
+			[
+				"inittime",
+				"initTimeGranularity"
+			],
+			[
+				"selec",
+				"selected_chart_names\tstatement"
+			],
+			[
+				"sele",
+				"selected_chart_names\tstatement"
+			],
+			[
+				"unsele",
+				"unselected_charts\tstatement"
+			],
+			[
+				"na",
+				"name"
+			],
+			[
+				"in",
+				"index\tstatement"
+			],
+			[
+				"getkanban",
+				"GetKanbanUnselectedCharts\tclass"
+			],
+			[
+				"mo",
+				"modal"
+			],
+			[
+				"update",
+				"UpdateKanbanCharts\tclass"
+			],
+			[
+				"row",
+				"row"
+			],
+			[
+				"saveka",
+				"initSaveKanbanButton"
+			],
+			[
+				"reru",
+				"return"
+			],
+			[
+				"ti",
+				"title"
+			],
+			[
+				"pro",
+				"prompt"
+			],
+			[
+				"open",
+				"openChart"
+			],
+			[
+				"bot",
+				"bootstrapTable"
+			],
+			[
+				"metric",
+				"metricArea"
+			],
+			[
+				"vale",
+				"values"
+			],
+			[
+				"metr",
+				"metrics"
+			],
+			[
+				"min",
+				"mindex"
+			],
+			[
+				"marin",
+				"margin-top\tproperty"
+			],
+			[
+				"metri",
+				"metricArea"
+			],
+			[
+				"refreshite",
+				"refreshMetricLine"
+			],
+			[
+				"sco",
+				"scoreTable"
+			],
+			[
+				"va",
+				"value"
+			],
+			[
+				"childite",
+				"childItem"
+			],
+			[
+				"score",
+				"score"
+			],
+			[
+				"child",
+				"childItems"
+			],
+			[
+				"items",
+				"items"
+			],
+			[
+				"metaa",
+				"metadata"
+			],
+			[
+				"metada",
+				"metadatas"
+			],
+			[
+				"getitemsc",
+				"GetItemScoreTable"
+			],
+			[
+				"ite",
+				"itemScoresRadar"
+			],
+			[
+				"item",
+				"itemScore"
+			],
+			[
+				"col",
+				"col-12"
+			],
+			[
+				"dimen",
+				"dimentionScore"
+			],
+			[
+				"dime",
+				"dimentionScores\tstatement"
+			],
+			[
+				"get",
+				"GetTotalScore\tclass"
+			],
+			[
+				"servi",
+				"service"
+			],
+			[
+				"pad",
+				"padding-top\tproperty"
+			],
+			[
+				"ser",
+				"service"
+			],
+			[
+				"ch",
+				"checks"
+			],
+			[
+				"che",
+				"checked"
+			],
+			[
+				"ech",
+				"echeckAll"
+			],
+			[
+				"sho",
+				"show"
+			],
+			[
+				"chec",
+				"checks"
+			],
+			[
+				"check",
+				"checks"
+			],
+			[
+				"show",
+				"shows"
+			],
+			[
+				"inde",
+				"index"
+			],
+			[
+				"index",
+				"indexOf"
+			],
+			[
+				"selectedfi",
+				"selectedFilterValues"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"for",
+				"form-group"
+			],
+			[
+				"ana",
+				"analysisql_app\tstatement"
+			],
+			[
+				"analy",
+				"analysisql\tmodule"
+			],
+			[
+				"inter",
+				"interaction_app\tstatement"
+			],
+			[
+				"ha",
+				"handleLineStack"
+			],
+			[
+				"ca",
+				"cabin_app\tstatement"
+			],
+			[
+				"colu",
+				"columns"
+			],
+			[
+				"datar",
+				"dataRow\tstatement"
+			],
+			[
+				"datarow",
+				"dataRows\tstatement"
+			],
+			[
+				"co",
+				"common\tmodule"
+			],
+			[
+				"da",
+				"dataRow\tstatement"
+			],
+			[
+				"cl",
+				"columns"
+			],
+			[
+				"data",
+				"dataRows\tstatement"
+			],
+			[
+				"Getdi",
+				"GetDimentionValues\tclass"
+			],
+			[
+				"di",
+				"dimention\tstatement"
+			],
+			[
+				"try",
+				"try\tTry/Except"
+			],
+			[
+				"du",
+				"dumps\tfunction"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "com/weibo/dip/durian/util/signature.py",
+			"settings":
+			{
+				"buffer_size": 0,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/yurun/Library/Application Support/Sublime Text 3/Packages/User/Anaconda.sublime-settings",
+			"settings":
+			{
+				"buffer_size": 21870,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"mdp",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"mds",
+				"Markdown Preview: Save to HTML"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"instaa",
+				"Install Package Control"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+	],
+	"file_history":
+	[
+		"/Users/yurun/workspace/durian/src/main/python/com/weibo/dip/durian/util/__init__.py",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sublime/Tmpfile8.html",
+		"/Users/yurun/Library/Application Support/Sublime Text 3/Packages/User/SublimeCodeIntel.sublime-settings",
+		"/Users/yurun/Library/Application Support/Sublime Text 3/Packages/User/Python3",
+		"/Users/yurun/Library/Application Support/Sublime Text 3/Packages/SublimeREPL/SublimeREPL.sublime-settings",
+		"/Users/yurun/Library/Application Support/Sublime Text 3/Packages/User/SublimeREPL.sublime-settings",
+		"/Users/yurun/Library/Application Support/Sublime Text 3/Packages/Python PEP8 Autoformat/pep8_autoformat.sublime-settings",
+		"/Users/yurun/Library/Application Support/Sublime Text 3/Packages/SublimeCodeIntel/SublimeCodeIntel.sublime-settings",
+		"/data0/workspace/hubble/videopyweb/static/js/navigation.js",
+		"/data0/workspace/hubble/videopyweb/templates/servicequality.html",
+		"/data0/workspace/hubble/videopyweb/static/js/compute.js",
+		"/data0/workspace/hubble/videopyweb/static/js/servicequality.js",
+		"/data0/workspace/hubble/videopyweb/static/js/interaction.js",
+		"/data0/workspace/hubble/videopyweb/static/css/servicequality.css",
+		"/data0/workspace/hubble/videopyweb/static/js/dataquality.js",
+		"/data0/workspace/hubble/videopyweb/servicequality.py",
+		"/data0/workspace/hubble/videopyweb/dataquality.py",
+		"/data0/workspace/hubble/videopyweb/cosmos.py",
+		"/data0/workspace/hubble/videopyweb/analysisql.py",
+		"/data0/workspace/hubble/videopyweb/main.py",
+		"/data0/workspace/hubble/videopyweb/static/css/dataquality.css",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sublime/Tmpfile2",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sublime/Tmpfile",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sublime/Tmpfile5",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sublime/Tmpfile6",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sublime/Tmpfile3",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sublime/Tmpfile10",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sublime/Tmpfile9",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sublime/Tmpfile4",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sublime/Tmpfile8",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sublime/Tmpfile7",
+		"/data0/workspace/hubble/videopyweb/cabin.py",
+		"/data0/workspace/hubble/videopyweb/templates/analysisql.html",
+		"/data0/workspace/hubble/videopyweb/static/js/cabin.js",
+		"/Users/yurun/Library/Application Support/Sublime Text 3/Packages/User/.jsbeautifyrc",
+		"/Users/yurun/Library/Application Support/Sublime Text 3/Packages/HTML-CSS-JS Prettify/.jsbeautifyrc.defaults.json",
+		"/Users/yurun/Library/Application Support/Sublime Text 3/Packages/HTML-CSS-JS Prettify/Default (OSX).sublime-keymap",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sync/sqllab/css/sqllab.css",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sync/sqllab/js/sqllab.js",
+		"/Users/yurun/Library/Mobile Documents/com~apple~CloudDocs/sync/sqllab/index.html",
+		"/Users/yurun/Library/Application Support/Sublime Text 3/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/yurun/Library/Application Support/Sublime Text 3/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/yurun/Downloads/aes-sample.eae1f364/Node/demo.js",
+		"/Users/yurun/Downloads/--master/README.md"
+	],
+	"find":
+	{
+		"height": 42.0
+	},
+	"find_in_files":
+	{
+		"height": 110.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"python_inte"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "com/weibo/dip/durian/util/signature.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Users/yurun/Library/Application Support/Sublime Text 3/Packages/User/Anaconda.sublime-settings",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 21870,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3152,
+								3163
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1439.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 30.0
+	},
+	"input":
+	{
+		"height": 42.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 144.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/User/Python3.sublime-build",
+	"project": "durian.sublime-project",
+	"replace":
+	{
+		"height": 56.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"static/js/servicequality.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 983.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 246.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
