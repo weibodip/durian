@@ -12,9 +12,11 @@ import org.apache.commons.lang3.time.FastDateFormat;
  */
 public class DatetimeUtil {
   public static final FastDateFormat DATETIME_FORMAT = FastDateFormat.getInstance("yyyyMMddHHmmss");
-
   public static final FastDateFormat COMMON_DATETIME_FORMAT =
       FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+
+  public static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
+  public static final FastDateFormat COMMON_DATE_FORMAT = FastDateFormat.getInstance("yyyy-MM-dd");
 
   public static final FastDateFormat ISO_8601_EXTENDED_DATETIME_FORMAT =
       DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT;
